@@ -72,25 +72,7 @@ class WelcomeView extends StatelessWidget {
                       },
                       child: const Text('Iniciar sesión'),
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF003366),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/login',
-                          arguments: {'register': true},
-                        );
-                      },
-                      child: const Text('Registrarme'),
-                    ),
+                    // ...eliminado botón de registro...
                   ],
                 ),
               ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginView extends StatefulWidget {
-  final bool isRegisterMode;
-  const LoginView({Key? key, this.isRegisterMode = false}) : super(key: key);
+  const LoginView({Key? key}) : super(key: key);
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -29,9 +29,9 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      widget.isRegisterMode ? 'Registrarme' : 'Iniciar sesión',
-                      style: const TextStyle(
+                    const Text(
+                      'Iniciar sesión',
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -67,28 +67,34 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         minimumSize: const Size(double.infinity, 48),
                       ),
-                      onPressed: () {
-                        // Simulación de navegación según tipo de usuario
-                        Navigator.pushNamed(context, '/objects');
+                      onPressed: () async {
+                        try {
+                          final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                          );
+                          if (userCredential.user != null) {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          }
+                        } catch (e) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Error de autenticación'),
+                              content: Text(e.toString()),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cerrar'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       },
-                      child: Text(
-                        widget.isRegisterMode
-                            ? 'Registrarme'
-                            : 'Iniciar sesión',
-                      ),
+                      child: const Text('Iniciar sesión'),
                     ),
                     const SizedBox(height: 12),
-                    if (!widget.isRegisterMode)
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/login',
-                            arguments: {'register': true},
-                          );
-                        },
-                        child: const Text('Registrarme'),
-                      ),
                     TextButton(
                       onPressed: () {
                         // Acción para recuperar contraseña (opcional)
