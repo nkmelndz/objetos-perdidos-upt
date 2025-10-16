@@ -113,6 +113,8 @@ class _AddObjectViewState extends State<AddObjectView> {
                   foundDate: _selectedDate,
                   imageUrl: _imageUrl,
                   status: ObjectStatus.pendiente,
+                  adminId: 'admin',
+                  createdAt: DateTime.now(),
                 );
                 _viewModel.addObject(object);
                 showDialog(
