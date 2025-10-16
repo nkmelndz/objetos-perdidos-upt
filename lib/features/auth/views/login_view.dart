@@ -71,13 +71,21 @@ class _LoginViewState extends State<LoginView> {
                         // Simulación de navegación según tipo de usuario
                         Navigator.pushNamed(context, '/objects');
                       },
-                      child: Text(widget.isRegisterMode ? 'Registrarme' : 'Iniciar sesión'),
+                      child: Text(
+                        widget.isRegisterMode
+                            ? 'Registrarme'
+                            : 'Iniciar sesión',
+                      ),
                     ),
                     const SizedBox(height: 12),
                     if (!widget.isRegisterMode)
                       TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login', arguments: {'register': true});
+                          Navigator.pushNamed(
+                            context,
+                            '/login',
+                            arguments: {'register': true},
+                          );
                         },
                         child: const Text('Registrarme'),
                       ),

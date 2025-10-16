@@ -28,7 +28,9 @@ class MainApp extends StatelessWidget {
       routes: {
         '/': (context) => const WelcomeView(),
         '/login': (context) {
-          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          final args =
+              ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>?;
           final isRegister = args != null && args['register'] == true;
           return LoginView(isRegisterMode: isRegister);
         },

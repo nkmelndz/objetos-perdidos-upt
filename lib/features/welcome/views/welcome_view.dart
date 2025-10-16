@@ -34,10 +34,7 @@ class WelcomeView extends StatelessWidget {
                 child: Text(
                   'Consulta y reporta objetos extraviados en la Escuela de Ingeniería de Sistemas.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
               const SizedBox(height: 40),
@@ -86,7 +83,11 @@ class WelcomeView extends StatelessWidget {
                         minimumSize: const Size(double.infinity, 48),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login', arguments: {'register': true});
+                        Navigator.pushNamed(
+                          context,
+                          '/login',
+                          arguments: {'register': true},
+                        );
                       },
                       child: const Text('Registrarme'),
                     ),
