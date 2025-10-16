@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:objetos_perdidos_upt/features/objects/views/objects_view_readonly.dart';
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({Key? key}) : super(key: key);
@@ -53,7 +54,9 @@ class WelcomeView extends StatelessWidget {
                         minimumSize: const Size(double.infinity, 48),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/objects');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ObjectsViewReadOnly()),
+                        );
                       },
                       child: const Text('Ver lista de objetos'),
                     ),

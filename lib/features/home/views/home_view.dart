@@ -5,6 +5,7 @@ import '../../profile/views/profile_view.dart';
 import '../viewmodels/home_dashboard_viewmodel.dart';
 import '../../objects/models/object_lost.dart';
 
+
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
 
@@ -15,12 +16,18 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = [
-    _HomeContent(),
-    ObjectsView(),
-    AddObjectView(),
-    ProfileView(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      _HomeContent(onTabChange: _onItemTapped),
+      ObjectsView(),
+      AddObjectView(),
+      ProfileView(),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -69,8 +76,10 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
+
 class _HomeContent extends StatelessWidget {
-  const _HomeContent();
+  final void Function(int) onTabChange;
+  const _HomeContent({required this.onTabChange});
 
   @override
   Widget build(BuildContext context) {
@@ -140,11 +149,7 @@ class _HomeContent extends StatelessWidget {
                       color: Color(0xFF003366),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const AddObjectView()),
-                          );
-                        },
+                        onTap: () => onTabChange(2),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 18),
                           child: Column(
@@ -165,11 +170,7 @@ class _HomeContent extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 2,
                       child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const ObjectsView()),
-                          );
-                        },
+                        onTap: () => onTabChange(1),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 18),
                           child: Column(

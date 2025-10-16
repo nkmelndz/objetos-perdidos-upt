@@ -3,6 +3,9 @@ import '../../models/object_lost.dart';
 import '../../models/entrega.dart';
 
 class ObjectsViewModel {
+  Future<void> updateObject(String id, ObjectLost object) async {
+    await _db.collection('objetos_perdidos').doc(id).update(object.toMap());
+  }
   final _db = FirebaseFirestore.instance;
   String _search = '';
   ObjectStatus? _filter;
