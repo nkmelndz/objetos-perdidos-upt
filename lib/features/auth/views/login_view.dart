@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../viewmodel/login_viewmodel.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -11,6 +11,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final LoginViewModel _viewModel = LoginViewModel();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,40 +62,45 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                      onPressed: () async {
-                        try {
-                          final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim(),
-                          );
-                          if (userCredential.user != null) {
-                            Navigator.pushReplacementNamed(context, '/home');
-                          }
-                        } catch (e) {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Error de autenticación'),
-                              content: Text(e.toString()),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Cerrar'),
-                                ),
-                              ],
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              minimumSize: const Size(double.infinity, 48),
                             ),
-                          );
-                        }
-                      },
-                      child: const Text('Iniciar sesión'),
-                    ),
+                            onPressed: () async {
+                              setState(() => _isLoading = true);
+                              final error = await _viewModel.signIn(
+                                emailController.text,
+                                passwordController.text,
+                              );
+                              setState(() => _isLoading = false);
+                              if (error == null) {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/home',
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Error de autenticación'),
+                                    content: Text(error),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cerrar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('Iniciar sesión'),
+                          ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () {
