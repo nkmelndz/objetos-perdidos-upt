@@ -14,6 +14,7 @@ class _AddObjectViewState extends State<AddObjectView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _encontradoPorController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   String _imageUrl = '';
 
@@ -68,6 +69,14 @@ class _AddObjectViewState extends State<AddObjectView> {
             ),
           ),
           const SizedBox(height: 16),
+          TextField(
+            controller: _encontradoPorController,
+            decoration: const InputDecoration(
+              labelText: 'Encontrado por',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 16),
           Row(
             children: [
               const Text('Fecha encontrada: '),
@@ -116,7 +125,15 @@ class _AddObjectViewState extends State<AddObjectView> {
                   adminId: 'admin',
                   createdAt: DateTime.now(),
                 );
-                _viewModel.addObject(object);
+
+                final entrega = {
+                  'objectId': object.id,
+                  'encontradoPor': _encontradoPorController.text,
+                  'fecha': _selectedDate,
+                };
+
+                _viewModel.addObjectAndEntrega(object, entrega);
+
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -135,6 +152,7 @@ class _AddObjectViewState extends State<AddObjectView> {
                 _nameController.clear();
                 _descController.clear();
                 _locationController.clear();
+                _encontradoPorController.clear();
                 setState(() {
                   _selectedDate = DateTime.now();
                   _imageUrl = '';

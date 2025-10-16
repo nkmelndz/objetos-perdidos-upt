@@ -42,6 +42,7 @@ class _HomeViewState extends State<HomeView> {
         title: Text(_getTitle(_selectedIndex)),
         backgroundColor: const Color(0xFF003366),
         foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
