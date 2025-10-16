@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "243427015309",
+    "project_id": "objetos-perdidos-upt",
+    "storage_bucket": "objetos-perdidos-upt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243427015309:android:b883a0275901d2bf8940c4",
+        "android_client_info": {
+          "package_name": "com.example.objetos_perdidos_upt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMp9kX8Mi23R1u75X0gWZfoxH74ePhTU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
