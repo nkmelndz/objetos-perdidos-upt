@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../objects/admin/views/objects_view.dart';
 import '../../objects/admin/views/add_object_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../viewmodels/home_dashboard_viewmodel.dart';
+import '../models/dashboard_data.dart';
 import '../../objects/models/object_lost.dart';
 import '../../objects/utils/object_lost_utils.dart';
 
@@ -146,31 +145,6 @@ class _HomeContentState extends State<_HomeContent>
     super.dispose();
   }
 
-  Stream<String> _getUserNameStream() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return Stream.value('Admin');
-    }
-
-    return FirebaseFirestore.instance
-        .collection('usuarios')
-        .doc(user.uid)
-        .snapshots()
-        .map((doc) {
-          if (doc.exists && doc.data() != null) {
-            final nombre = doc.data()!['nombre'] as String?;
-            if (nombre != null && nombre.isNotEmpty) {
-              return nombre.split(' ').first; // Solo el primer nombre
-            }
-          }
-          // Fallback al email si no hay nombre en Firestore
-          if (user.email != null) {
-            return user.email!.split('@').first;
-          }
-          return 'Admin';
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -187,203 +161,280 @@ class _HomeContentState extends State<_HomeContent>
         ),
       ),
       child: SafeArea(
-        child: StreamBuilder<String>(
-          stream: _getUserNameStream(),
-          builder: (context, userSnapshot) {
-            final userName = userSnapshot.data ?? 'Admin';
+        child: StreamBuilder<DashboardData>(
+          stream: viewModel.getDashboardDataStreamReactive(),
+          builder: (context, snapshot) {
+            // Manejo de estados de carga
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingState();
+            }
 
-            return StreamBuilder<List<ObjectLost>>(
-              stream: viewModel.getObjects(),
-              builder: (context, snapshot) {
-                final objects = snapshot.data ?? <ObjectLost>[];
-                final total = objects.length;
-                final entregados = objects
-                    .where((o) => o.status == ObjectStatus.entregado)
-                    .length;
-                final pendientes = objects
-                    .where((o) => o.status == ObjectStatus.pendiente)
-                    .length;
-                final ultimos = objects.take(5).toList();
+            if (snapshot.hasError) {
+              return _buildErrorState(snapshot.error.toString());
+            }
 
-                return CustomScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  slivers: [
-                    // Header con gradiente
-                    SliverToBoxAdapter(
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(
-                            isTablet ? 32.0 : 24.0,
-                            20.0,
-                            isTablet ? 32.0 : 24.0,
-                            32.0,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Saludo
-                              Text(
-                                '¡Hola, $userName! 👋',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: isTablet ? 32 : 28,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Gestiona los objetos perdidos de la UPT',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: isTablet ? 16 : 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+            // Obtener datos del dashboard
+            final data = snapshot.data ?? DashboardData.empty();
+
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // Header con gradiente
+                SliverToBoxAdapter(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: _buildHeader(
+                      userName: data.userName,
+                      isTablet: isTablet,
                     ),
+                  ),
+                ),
 
-                    // Tarjetas de resumen
-                    SliverToBoxAdapter(
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isTablet ? 32.0 : 24.0,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _ModernResumenCard(
-                                  icon: Icons.inventory_2_rounded,
-                                  label: 'Total',
-                                  value: total.toString(),
-                                  color: const Color(0xFF1565C0),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _ModernResumenCard(
-                                  icon: Icons.check_circle_rounded,
-                                  label: 'Entregados',
-                                  value: entregados.toString(),
-                                  color: const Color(0xFF4CAF50),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _ModernResumenCard(
-                                  icon: Icons.pending_rounded,
-                                  label: 'Pendientes',
-                                  value: pendientes.toString(),
-                                  color: const Color(0xFFFF9800),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                // Tarjetas de resumen
+                SliverToBoxAdapter(
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: _buildSummaryCards(
+                      total: data.totalCount,
+                      delivered: data.deliveredCount,
+                      pending: data.pendingCount,
+                      isTablet: isTablet,
                     ),
+                  ),
+                ),
 
-                    const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
-                    // Contenido principal con fondo blanco
-                    SliverToBoxAdapter(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(32),
-                            topRight: Radius.circular(32),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, -5),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            isTablet ? 32.0 : 24.0,
-                            32.0,
-                            isTablet ? 32.0 : 24.0,
-                            24.0,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Título de sección
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 4,
-                                    height: 24,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF1565C0),
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    'Últimos objetos registrados',
-                                    style: TextStyle(
-                                      fontSize: isTablet ? 22 : 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF2C3E50),
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 20),
-
-                              // Lista de objetos con scrollbar
-                              if (ultimos.isEmpty)
-                                _buildEmptyState()
-                              else
-                                Container(
-                                  constraints: BoxConstraints(
-                                    maxHeight:
-                                        size.height *
-                                        0.5, // Máximo 50% de la altura de pantalla
-                                  ),
-                                  child: Scrollbar(
-                                    controller: _scrollController,
-                                    thumbVisibility: true,
-                                    thickness: 6,
-                                    radius: const Radius.circular(8),
-                                    child: ListView.builder(
-                                      controller: _scrollController,
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(),
-                                      padding: const EdgeInsets.only(right: 8),
-                                      itemCount: ultimos.length,
-                                      itemBuilder: (context, index) {
-                                        return _buildObjectCard(
-                                          ultimos[index],
-                                          index,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
+                // Contenido principal con fondo blanco
+                SliverToBoxAdapter(
+                  child: _buildMainContent(
+                    recentObjects: data.recentObjects,
+                    isEmpty: data.isEmpty,
+                    screenSize: size,
+                    isTablet: isTablet,
+                  ),
+                ),
+              ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  /// Construye el header con saludo personalizado
+  Widget _buildHeader({required String userName, required bool isTablet}) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        isTablet ? 32.0 : 24.0,
+        20.0,
+        isTablet ? 32.0 : 24.0,
+        32.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '¡Hola, $userName! 👋',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isTablet ? 32 : 28,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Gestiona los objetos perdidos de la UPT',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: isTablet ? 16 : 14,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Construye las tarjetas de resumen con estadísticas
+  Widget _buildSummaryCards({
+    required int total,
+    required int delivered,
+    required int pending,
+    required bool isTablet,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 32.0 : 24.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: _ModernResumenCard(
+              icon: Icons.inventory_2_rounded,
+              label: 'Total',
+              value: total.toString(),
+              color: const Color(0xFF1565C0),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _ModernResumenCard(
+              icon: Icons.check_circle_rounded,
+              label: 'Entregados',
+              value: delivered.toString(),
+              color: const Color(0xFF4CAF50),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _ModernResumenCard(
+              icon: Icons.pending_rounded,
+              label: 'Pendientes',
+              value: pending.toString(),
+              color: const Color(0xFFFF9800),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Construye el contenido principal con la lista de objetos
+  Widget _buildMainContent({
+    required List<ObjectLost> recentObjects,
+    required bool isEmpty,
+    required Size screenSize,
+    required bool isTablet,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          isTablet ? 32.0 : 24.0,
+          32.0,
+          isTablet ? 32.0 : 24.0,
+          24.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle(isTablet: isTablet),
+            const SizedBox(height: 20),
+            if (isEmpty)
+              _buildEmptyState()
+            else
+              _buildObjectsList(
+                objects: recentObjects,
+                maxHeight: screenSize.height * 0.5,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Construye el título de la sección
+  Widget _buildSectionTitle({required bool isTablet}) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 24,
+          decoration: BoxDecoration(
+            color: const Color(0xFF1565C0),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          'Últimos objetos registrados',
+          style: TextStyle(
+            fontSize: isTablet ? 22 : 20,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF2C3E50),
+            letterSpacing: 0.3,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Construye la lista de objetos con scrollbar
+  Widget _buildObjectsList({
+    required List<ObjectLost> objects,
+    required double maxHeight,
+  }) {
+    return Container(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      child: Scrollbar(
+        controller: _scrollController,
+        thumbVisibility: true,
+        thickness: 6,
+        radius: const Radius.circular(8),
+        child: ListView.builder(
+          controller: _scrollController,
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(right: 8),
+          itemCount: objects.length,
+          itemBuilder: (context, index) {
+            return _buildObjectCard(objects[index], index);
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Estado de carga
+  Widget _buildLoadingState() {
+    return const Center(child: CircularProgressIndicator(color: Colors.white));
+  }
+
+  /// Estado de error
+  Widget _buildErrorState(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: Colors.white.withOpacity(0.8),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Error al cargar datos',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Por favor, intenta de nuevo',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.8),
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
