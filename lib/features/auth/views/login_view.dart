@@ -372,9 +372,49 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
 
                                       // Enlace de recuperar contraseña
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           HapticFeedback.selectionClick();
-                                          // Implementar recuperación de contraseña
+                                          final email = emailController.text
+                                              .trim();
+                                          if (email.isEmpty) {
+                                            _showErrorDialog(
+                                              'Ingresa tu correo para enviarte el enlace de restablecimiento.',
+                                            );
+                                            return;
+                                          }
+                                          setState(() => _isLoading = true);
+                                          final err = await _viewModel
+                                              .sendPasswordReset(email);
+                                          if (!mounted) return;
+                                          setState(() => _isLoading = false);
+                                          if (err == null) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) => AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                ),
+                                                title: const Text(
+                                                  'Revisa tu correo',
+                                                ),
+                                                content: Text(
+                                                  'Te enviamos un enlace para restablecer tu contraseña a:\n$email',
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: const Text(
+                                                      'Entendido',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            _showErrorDialog(err);
+                                          }
                                         },
                                         style: TextButton.styleFrom(
                                           padding: const EdgeInsets.symmetric(

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/views/login_view.dart';
+import '../../auth/viewmodels/login_viewmodel.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_info_card.dart';
 import 'widgets/profile_action_buttons.dart';
@@ -218,7 +219,12 @@ class _ProfileViewState extends State<ProfileView>
                               onLogout: _handleLogout,
                             ),
                           ),
+                            const SizedBox(height: 24),
 
+                            // Sección cambiar contraseña
+                            _buildSectionTitle('Seguridad'),
+                            const SizedBox(height: 12),
+                            _ChangePasswordCard(isTablet: isTablet),
                           const SizedBox(height: 24),
                         ],
                       ),
@@ -343,5 +349,165 @@ class _ProfileViewState extends State<ProfileView>
         (route) => false,
       );
     }
+  }
+}
+
+class _ChangePasswordCard extends StatefulWidget {
+  final bool isTablet;
+  const _ChangePasswordCard({required this.isTablet});
+
+  @override
+  State<_ChangePasswordCard> createState() => _ChangePasswordCardState();
+}
+
+class _ChangePasswordCardState extends State<_ChangePasswordCard> {
+  final _currentCtrl = TextEditingController();
+  final _newCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
+  bool _isLoading = false;
+  bool _obscureCurrent = true;
+  bool _obscureNew = true;
+  bool _obscureConfirm = true;
+  final _vm = LoginViewModel();
+
+  @override
+  void dispose() {
+    _currentCtrl.dispose();
+    _newCtrl.dispose();
+    _confirmCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+        border: Border.all(color: const Color(0xFFE9ECEF)),
+      ),
+      padding: EdgeInsets.all(widget.isTablet ? 24 : 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _passwordField(
+            controller: _currentCtrl,
+            label: 'Contraseña actual',
+            obscure: _obscureCurrent,
+            onToggle: () => setState(() => _obscureCurrent = !_obscureCurrent),
+          ),
+          const SizedBox(height: 12),
+          _passwordField(
+            controller: _newCtrl,
+            label: 'Nueva contraseña',
+            obscure: _obscureNew,
+            onToggle: () => setState(() => _obscureNew = !_obscureNew),
+          ),
+          const SizedBox(height: 12),
+          _passwordField(
+            controller: _confirmCtrl,
+            label: 'Confirmar nueva contraseña',
+            obscure: _obscureConfirm,
+            onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 44,
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1565C0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _handleChangePassword,
+                    icon: const Icon(Icons.lock_reset_rounded, color: Colors.white),
+                    label: const Text(
+                      'Actualizar contraseña',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _passwordField({
+    required TextEditingController controller,
+    required String label,
+    required bool obscure,
+    required VoidCallback onToggle,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: const Icon(Icons.lock_outline_rounded),
+        suffixIcon: IconButton(
+          icon: Icon(obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+          onPressed: onToggle,
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  Future<void> _handleChangePassword() async {
+    final current = _currentCtrl.text.trim();
+    final newPwd = _newCtrl.text.trim();
+    final confirm = _confirmCtrl.text.trim();
+
+    if (current.isEmpty || newPwd.isEmpty || confirm.isEmpty) {
+      _showSnack('Completa todos los campos', isError: true);
+      return;
+    }
+    if (newPwd.length < 6) {
+      _showSnack('La nueva contraseña debe tener al menos 6 caracteres', isError: true);
+      return;
+    }
+    if (newPwd != confirm) {
+      _showSnack('Las contraseñas no coinciden', isError: true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final err = await _vm.changePassword(currentPassword: current, newPassword: newPwd);
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (err == null) {
+      _currentCtrl.clear();
+      _newCtrl.clear();
+      _confirmCtrl.clear();
+      _showSnack('Contraseña actualizada correctamente');
+    } else {
+      _showSnack(err, isError: true);
+    }
+  }
+
+  void _showSnack(String msg, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: isError ? Colors.red[600] : const Color(0xFF4CAF50),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 }
