@@ -126,13 +126,7 @@ class _AddObjectViewState extends State<AddObjectView> {
                   createdAt: DateTime.now(),
                 );
 
-                final entrega = {
-                  'objectId': object.id,
-                  'encontradoPor': _encontradoPorController.text,
-                  'fecha': _selectedDate,
-                };
-
-                _viewModel.addObjectAndEntrega(object, entrega);
+                _viewModel.addObjectAndEntrega(object, _encontradoPorController.text);
 
                 showDialog(
                   context: context,

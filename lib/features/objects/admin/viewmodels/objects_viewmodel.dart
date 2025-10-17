@@ -44,6 +44,31 @@ class ObjectsViewModel {
   Future<void> addEntrega(String objectId, Entrega entrega) async {
     final doc = _db.collection('objetos_perdidos').doc(objectId);
     await doc.update({'estado': 'entregado'});
-    await doc.collection('entrega').add(entrega.toMap());
+    
+    // Buscar el documento de entrega existente y actualizarlo
+    final entregaSnapshot = await doc.collection('entrega').limit(1).get();
+    if (entregaSnapshot.docs.isNotEmpty) {
+      // Actualizar el documento existente
+      await entregaSnapshot.docs.first.reference.update(entrega.toMap());
+    } else {
+      // Si no existe, crear uno nuevo (caso de respaldo)
+      await doc.collection('entrega').add(entrega.toMap());
+    }
+  }
+
+  /// Obtiene el nombreEncontradoPor de la subcolección entrega
+  Future<String> getNombreEncontradoPor(String objectId) async {
+    final entregaSnapshot = await _db
+        .collection('objetos_perdidos')
+        .doc(objectId)
+        .collection('entrega')
+        .limit(1)
+        .get();
+    
+    if (entregaSnapshot.docs.isNotEmpty) {
+      final data = entregaSnapshot.docs.first.data();
+      return data['nombre_encontrado_por'] ?? '';
+    }
+    return '';
   }
 }

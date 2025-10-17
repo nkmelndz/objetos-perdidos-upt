@@ -152,7 +152,7 @@ class _ObjectsViewState extends State<ObjectsView> {
                                   ? null
                                   : () async {
                                       final entrega =
-                                          await _showEntregaDialog(context);
+                                          await _showEntregaDialog(context, obj.id);
                                       if (entrega != null) {
                                         await _viewModel.addEntrega(obj.id, entrega);
                                       }
@@ -255,8 +255,10 @@ class _ObjectsViewState extends State<ObjectsView> {
   }
 
   /// Diálogo para registrar entrega
-  Future<Entrega?> _showEntregaDialog(BuildContext context) async {
-    final nombreEncontradoPorController = TextEditingController();
+  Future<Entrega?> _showEntregaDialog(BuildContext context, String objectId) async {
+    // Obtener el nombreEncontradoPor de la base de datos
+    final nombreEncontradoPor = await _viewModel.getNombreEncontradoPor(objectId);
+    final nombreEncontradoPorController = TextEditingController(text: nombreEncontradoPor);
     final nombreDevueltoAController = TextEditingController();
     final codigoEstudianteController = TextEditingController();
     final observacionesController = TextEditingController();
@@ -274,6 +276,8 @@ class _ObjectsViewState extends State<ObjectsView> {
                 TextField(
                   controller: nombreEncontradoPorController,
                   decoration: const InputDecoration(labelText: 'Encontrado por'),
+                  enabled: false,
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
                 TextField(
                   controller: nombreDevueltoAController,
@@ -322,12 +326,12 @@ class _ObjectsViewState extends State<ObjectsView> {
                 final entrega = Entrega(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   nombreEncontradoPor: nombreEncontradoPorController.text,
-                  nombreDevueltoA: nombreDevueltoAController.text,
-                  codigoEstudiante: codigoEstudianteController.text,
-                  fotoEntregaUrl: '',
+                  nombreDevueltoA: nombreDevueltoAController.text.isNotEmpty ? nombreDevueltoAController.text : null,
+                  codigoEstudiante: codigoEstudianteController.text.isNotEmpty ? codigoEstudianteController.text : null,
+                  fotoEntregaUrl: null, // Se puede implementar después
                   fechaEntrega: fechaEntrega,
-                  adminId: '',
-                  observaciones: observacionesController.text,
+                  adminId: 'admin', // Se puede mejorar para obtener el admin actual
+                  observaciones: observacionesController.text.isNotEmpty ? observacionesController.text : null,
                 );
                 Navigator.pop(context, entrega);
               },
