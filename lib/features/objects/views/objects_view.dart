@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../admin/viewmodels/objects_viewmodel.dart';
 import '../models/object_lost.dart';
 import '../models/entrega.dart';
+import '../utils/object_lost_utils.dart';
 import '../../../services/auth_service.dart';
 
 class ObjectsView extends StatefulWidget {

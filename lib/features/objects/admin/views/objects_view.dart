@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../viewmodels/objects_viewmodel.dart';
 import '../../models/object_lost.dart';
 import '../../models/entrega.dart';
+import '../../utils/object_lost_utils.dart';
 import '../../../../services/auth_service.dart';
 
 class ObjectsView extends StatefulWidget {
@@ -14,7 +15,6 @@ class ObjectsView extends StatefulWidget {
 class _ObjectsViewState extends State<ObjectsView> {
   final ObjectsViewModel _viewModel = ObjectsViewModel();
   ObjectStatus? _selectedFilter;
-  String _search = '';
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,9 @@ class _ObjectsViewState extends State<ObjectsView> {
                     hintText: 'Buscar objeto...',
                     border: OutlineInputBorder(),
                   ),
-                  onChanged: (value) => setState(() => _search = value),
+                  onChanged: (value) {
+                    _viewModel.setSearch(value);
+                  },
                 ),
               ),
               const SizedBox(width: 8),
@@ -46,11 +48,14 @@ class _ObjectsViewState extends State<ObjectsView> {
                   ...ObjectStatus.values.map(
                     (status) => DropdownMenuItem<ObjectStatus?>(
                       value: status,
-                      child: Text(_statusText(status)),
+                      child: Text(ObjectLostUtils.statusToText(status)),
                     ),
                   ),
                 ],
-                onChanged: (value) => setState(() => _selectedFilter = value),
+                onChanged: (value) {
+                  setState(() => _selectedFilter = value);
+                  _viewModel.setFilter(value);
+                },
               ),
             ],
           ),
@@ -64,22 +69,6 @@ class _ObjectsViewState extends State<ObjectsView> {
                 }
 
                 var objects = snapshot.data ?? [];
-
-                // aplicar búsqueda y filtro locales
-                if (_search.isNotEmpty) {
-                  objects = objects
-                      .where(
-                        (o) =>
-                            o.name.toLowerCase().contains(_search.toLowerCase()) ||
-                            o.description.toLowerCase().contains(_search.toLowerCase()) ||
-                            o.location.toLowerCase().contains(_search.toLowerCase()),
-                      )
-                      .toList();
-                }
-
-                if (_selectedFilter != null) {
-                  objects = objects.where((o) => o.status == _selectedFilter).toList();
-                }
 
                 if (objects.isEmpty) {
                   return const Center(child: Text('Sin objetos registrados'));
@@ -110,7 +99,7 @@ class _ObjectsViewState extends State<ObjectsView> {
                               ),
                         title: Text(obj.name),
                         subtitle: Text(
-                          'Encontrado: ${_formatDate(obj.foundDate)}\n${obj.description}',
+                          'Encontrado: ${ObjectLostUtils.formatDate(obj.foundDate)}\n${obj.description}',
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -121,11 +110,11 @@ class _ObjectsViewState extends State<ObjectsView> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _statusColor(obj.status),
+                                color: ObjectLostUtils.statusToColor(obj.status),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                _statusText(obj.status),
+                                ObjectLostUtils.statusToText(obj.status),
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ),
@@ -342,32 +331,5 @@ class _ObjectsViewState extends State<ObjectsView> {
         );
       },
     );
-  }
-
-  /// Métodos auxiliares
-  static String _statusText(ObjectStatus status) {
-    switch (status) {
-      case ObjectStatus.pendiente:
-        return 'Pendiente';
-      case ObjectStatus.entregado:
-        return 'Entregado';
-      case ObjectStatus.reclamado:
-        return 'Reclamado';
-    }
-  }
-
-  static Color _statusColor(ObjectStatus status) {
-    switch (status) {
-      case ObjectStatus.pendiente:
-        return Colors.orange;
-      case ObjectStatus.entregado:
-        return Colors.green;
-      case ObjectStatus.reclamado:
-        return Colors.blueGrey;
-    }
-  }
-
-  static String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }

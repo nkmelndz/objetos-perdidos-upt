@@ -106,6 +106,7 @@ class _AddObjectViewState extends State<AddObjectView> {
             width: double.infinity,
             child: ElevatedButton.icon(
               icon: const Icon(Icons.save),
+              label: const Text('Registrar objeto'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF003366),
                 foregroundColor: Colors.white,
@@ -114,50 +115,104 @@ class _AddObjectViewState extends State<AddObjectView> {
                 ),
                 minimumSize: const Size(double.infinity, 48),
               ),
-              onPressed: () {
-                final object = ObjectLost(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  name: _nameController.text,
-                  description: _descController.text,
-                  location: _locationController.text,
-                  foundDate: _selectedDate,
-                  imageUrl: _imageUrl,
-                  status: ObjectStatus.pendiente,
-                  userId: AuthService.getCurrentUserId() ?? 'unknown',
-                  createdAt: DateTime.now(),
+              onPressed: () async {
+                // Validar formulario
+                final validation = _viewModel.validateFormData(
+                  _nameController.text,
+                  _descController.text,
+                  _locationController.text,
+                  _encontradoPorController.text,
                 );
-
-                _viewModel.addObjectAndEntrega(object, _encontradoPorController.text);
-
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Objeto registrado'),
-                    content: const Text(
-                      'El objeto ha sido registrado correctamente.',
+                
+                if (validation != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(validation),
+                      backgroundColor: Colors.red,
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cerrar'),
+                  );
+                  return;
+                }
+
+                // Validar fecha
+                final dateValidation = _viewModel.validateFoundDate(_selectedDate);
+                if (dateValidation != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(dateValidation),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                try {
+                  final object = ObjectLost(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: _nameController.text.trim(),
+                    description: _descController.text.trim(),
+                    location: _locationController.text.trim(),
+                    foundDate: _selectedDate,
+                    imageUrl: _imageUrl,
+                    status: ObjectStatus.pendiente,
+                    userId: AuthService.getCurrentUserId() ?? 'unknown',
+                    createdAt: DateTime.now(),
+                  );
+
+                  await _viewModel.addObjectAndEntrega(object, _encontradoPorController.text.trim());
+
+                  if (mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Objeto registrado'),
+                        content: const Text(
+                          'El objeto ha sido registrado correctamente.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cerrar'),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-                _nameController.clear();
-                _descController.clear();
-                _locationController.clear();
-                _encontradoPorController.clear();
-                setState(() {
-                  _selectedDate = DateTime.now();
-                  _imageUrl = '';
-                });
+                    );
+
+                    // Limpiar formulario
+                    _nameController.clear();
+                    _descController.clear();
+                    _locationController.clear();
+                    _encontradoPorController.clear();
+                    setState(() {
+                      _selectedDate = DateTime.now();
+                      _imageUrl = '';
+                    });
+                  }
+
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al guardar: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
-              label: const Text('Registrar objeto'),
             ),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descController.dispose();
+    _locationController.dispose();
+    _encontradoPorController.dispose();
+    super.dispose();
   }
 }
