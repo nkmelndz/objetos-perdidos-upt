@@ -12,33 +12,39 @@ class AddObjectViewModel {
   }
 
   /// Guarda el objeto y crea la entrega inicial (solo con nombreEncontradoPor)
-  Future<void> addObjectAndEntrega(ObjectLost object, String nombreEncontradoPor) async {
+  Future<void> addObjectAndEntrega(
+    ObjectLost object,
+    String nombreEncontradoPor,
+  ) async {
     final data = object.toMap();
     // Primero guardar el objeto y obtener el docRef
     final docRef = await _db.collection('objetos_perdidos').add(data);
-    
+
     // Crear entrega inicial solo con nombreEncontradoPor
     final entregaInicial = Entrega.inicial(
       nombreEncontradoPor: nombreEncontradoPor,
     );
-    
+
     // Guardar la entrega inicial en una subcolección "entrega" del objeto
     await docRef.collection('entrega').add(entregaInicial.toMap());
   }
 
   /// Valida los datos del formulario antes de guardar
-  String? validateFormData(String name, String description, String location, String nombreEncontradoPor) {
+  String? validateFormData(
+    String name,
+    String description,
+    String location,
+    String nombreEncontradoPor,
+  ) {
     if (name.trim().isEmpty) {
       return 'El nombre del objeto es requerido';
     }
     if (name.trim().length < 3) {
       return 'El nombre debe tener al menos 3 caracteres';
     }
-    if (description.trim().isEmpty) {
-      return 'La descripción es requerida';
-    }
-    if (description.trim().length < 10) {
-      return 'La descripción debe tener al menos 10 caracteres';
+    // La descripción es opcional, pero si se proporciona debe tener contenido válido
+    if (description.trim().isNotEmpty && description.trim().length < 5) {
+      return 'La descripción debe tener al menos 5 caracteres';
     }
     if (location.trim().isEmpty) {
       return 'El lugar donde se encontró es requerido';

@@ -64,8 +64,16 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isTablet = size.width > 600;
+    // Mostrar siempre botón de retroceso y redirigir a Welcome
 
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        // Redirigir siempre a la vista de Welcome y evitar pop por defecto
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+        return false;
+      },
+      child: Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -92,7 +100,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                   ),
                   child: Row(
                     children: [
-                      // Botón de regreso solo ícono (sin fondo ni contorno)
+                      // Botón de regreso siempre visible: va a Welcome
                       IconButton(
                         icon: const Icon(
                           Icons.arrow_back_ios_rounded,
@@ -101,7 +109,10 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                         ),
                         onPressed: () {
                           HapticFeedback.selectionClick();
-                          Navigator.pop(context);
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/',
+                            (Route<dynamic> route) => false,
+                          );
                         },
                         splashRadius: 22,
                       ),
@@ -137,17 +148,49 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Logo y título superior
+                            // Logo con acento sutil amarillo
                             Container(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
+                                color: Colors.white.withOpacity(0.95),
                                 shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 20,
+                                    spreadRadius: 2,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              child: Icon(
-                                Icons.inventory_2_rounded,
-                                size: isTablet ? 80 : 64,
-                                color: Colors.white,
+                              child: Stack(
+                                children: [
+                                  Icon(
+                                    Icons.inventory_2_rounded,
+                                    size: isTablet ? 80 : 64,
+                                    color: const Color(0xFF1565C0),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF8E1),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: const Color(0xFFFFF176),
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.verified_rounded,
+                                        size: isTablet ? 20 : 16,
+                                        color: const Color(0xFFF9A825),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
 
@@ -170,7 +213,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                             Text(
                               'Accede a tu cuenta',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: isTablet ? 18 : 16,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -189,7 +232,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                                 borderRadius: BorderRadius.circular(24),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
+                                    color: Colors.black.withOpacity(0.1),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -255,9 +298,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                                         ? Container(
                                             height: 48,
                                             decoration: BoxDecoration(
-                                              color: const Color(
-                                                0xFF1565C0,
-                                              ).withOpacity(0.7),
+                                              color: const Color(0xFF1565C0),
                                               borderRadius:
                                                   BorderRadius.circular(14),
                                             ),
@@ -354,7 +395,8 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildTextField({
@@ -379,14 +421,23 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
         style: const TextStyle(fontSize: 15, color: Color(0xFF2C3E50)),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
-          prefixIcon: Icon(icon, color: const Color(0xFF1565C0), size: 20),
+          labelStyle: const TextStyle(
+            color: Color(0xFF6C757D),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(left: 12, right: 8),
+            child: Icon(icon, color: const Color(0xFF1565C0), size: 20),
+          ),
           suffixIcon: suffixIcon,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
           ),
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
         ),
       ),
     );

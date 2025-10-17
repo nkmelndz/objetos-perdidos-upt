@@ -101,7 +101,7 @@ Future<ObjectLost?> showEditObjectDialog({
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 4),
                     // Botones de acción
                     Row(
                       children: [

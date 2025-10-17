@@ -49,7 +49,7 @@ class AddObjectForm extends StatelessWidget {
         _buildTextField(
           controller: descController,
           focusNode: descFocus,
-          label: 'Descripción detallada',
+          label: 'Descripción detallada (Opcional)',
           icon: Icons.description_rounded,
           hint: 'Describe características del objeto',
           maxLines: 4,

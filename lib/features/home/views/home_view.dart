@@ -354,7 +354,7 @@ class _HomeContentState extends State<_HomeContent>
           width: 4,
           height: 24,
           decoration: BoxDecoration(
-            color: const Color(0xFF1565C0),
+            color: const Color(0xFFFFC107),
             borderRadius: BorderRadius.circular(2),
           ),
         ),

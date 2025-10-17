@@ -142,7 +142,7 @@ class _ObjectsViewState extends State<ObjectsView>
                           hintStyle: TextStyle(color: Colors.grey[400]),
                           prefixIcon: Icon(
                             Icons.search_rounded,
-                            color: const Color(0xFF1565C0),
+                            color: const Color(0xFFFFC107),
                             size: 22,
                           ),
                           suffixIcon: _searchController.text.isNotEmpty
@@ -316,7 +316,7 @@ class _ObjectsViewState extends State<ObjectsView>
             child: Text(
               label,
               style: TextStyle(
-                color: isSelected ? const Color(0xFF1565C0) : Colors.white,
+                color: isSelected ? const Color(0xFFFFC107) : Colors.white,
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
