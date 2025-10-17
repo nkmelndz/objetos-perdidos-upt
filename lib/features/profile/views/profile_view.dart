@@ -27,7 +27,7 @@ class _ProfileViewState extends State<ProfileView>
   @override
   void initState() {
     super.initState();
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
