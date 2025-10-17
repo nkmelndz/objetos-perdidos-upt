@@ -22,32 +22,25 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
   @override
   void initState() {
     super.initState();
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
     // Iniciar animaciones
     _fadeController.forward();
@@ -67,7 +60,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isTablet = size.width > 600;
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -95,23 +88,18 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                   ),
                   child: Row(
                     children: [
-                      // Botón de regreso minimalista
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(10),
+                      // Botón de regreso solo ícono (sin fondo ni contorno)
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_rounded,
+                          color: Colors.white,
+                          size: 20,
                         ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          onPressed: () {
-                            HapticFeedback.selectionClick();
-                            Navigator.pop(context);
-                          },
-                        ),
+                        onPressed: () {
+                          HapticFeedback.selectionClick();
+                          Navigator.pop(context);
+                        },
+                        splashRadius: 22,
                       ),
                       const SizedBox(width: 16),
                       // Título simplificado
@@ -129,7 +117,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                   ),
                 ),
               ),
-              
+
               // Contenido principal
               Expanded(
                 child: Container(
@@ -190,9 +178,9 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                   },
                                 ),
                               ),
-                              
+
                               const SizedBox(height: 20),
-                              
+
                               // Filtros mejorados como segmented control
                               Container(
                                 width: double.infinity,
@@ -206,7 +194,8 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                     Expanded(
                                       child: _buildSegmentedButton(
                                         label: 'Todos',
-                                        isSelected: _viewModel.currentFilter == null,
+                                        isSelected:
+                                            _viewModel.currentFilter == null,
                                         onTap: () {
                                           _viewModel.setFilter(null);
                                           setState(() {});
@@ -216,9 +205,13 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                     Expanded(
                                       child: _buildSegmentedButton(
                                         label: 'Pendiente',
-                                        isSelected: _viewModel.currentFilter == ObjectStatus.pendiente,
+                                        isSelected:
+                                            _viewModel.currentFilter ==
+                                            ObjectStatus.pendiente,
                                         onTap: () {
-                                          _viewModel.setFilter(ObjectStatus.pendiente);
+                                          _viewModel.setFilter(
+                                            ObjectStatus.pendiente,
+                                          );
                                           setState(() {});
                                         },
                                       ),
@@ -226,9 +219,13 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                     Expanded(
                                       child: _buildSegmentedButton(
                                         label: 'Entregado',
-                                        isSelected: _viewModel.currentFilter == ObjectStatus.entregado,
+                                        isSelected:
+                                            _viewModel.currentFilter ==
+                                            ObjectStatus.entregado,
                                         onTap: () {
-                                          _viewModel.setFilter(ObjectStatus.entregado);
+                                          _viewModel.setFilter(
+                                            ObjectStatus.entregado,
+                                          );
                                           setState(() {});
                                         },
                                       ),
@@ -239,13 +236,14 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                             ],
                           ),
                         ),
-                        
+
                         // Lista de objetos
                         Expanded(
                           child: StreamBuilder<List<ObjectLost>>(
                             stream: _viewModel.objectsStream(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                                 return const Center(
                                   child: CircularProgressIndicator(
                                     color: Color(0xFF1565C0),
@@ -300,25 +298,23 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? Colors.white
-              : Colors.transparent,
+          color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ] : null,
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected 
-                  ? const Color(0xFF1565C0)
-                  : Colors.grey[600],
+              color: isSelected ? const Color(0xFF1565C0) : Colors.grey[600],
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
@@ -343,10 +339,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(
-            color: Colors.grey[200]!,
-            width: 1,
-          ),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
         ),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -390,9 +383,9 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                             size: 30,
                           ),
                   ),
-                  
+
                   const SizedBox(width: 16),
-                  
+
                   // Información principal
                   Expanded(
                     child: Column(
@@ -419,7 +412,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                       ],
                     ),
                   ),
-                  
+
                   // Estado
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -427,10 +420,14 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: ObjectLostUtils.statusToColor(obj.status).withOpacity(0.1),
+                      color: ObjectLostUtils.statusToColor(
+                        obj.status,
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: ObjectLostUtils.statusToColor(obj.status).withOpacity(0.3),
+                        color: ObjectLostUtils.statusToColor(
+                          obj.status,
+                        ).withOpacity(0.3),
                         width: 1,
                       ),
                     ),
@@ -445,9 +442,9 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Footer del card
               Container(
                 padding: const EdgeInsets.all(12),
@@ -529,10 +526,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
             const SizedBox(height: 8),
             Text(
               'Intenta ajustar los filtros de búsqueda',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
           ],
