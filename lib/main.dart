@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'features/welcome/views/welcome_view.dart';
 import 'features/auth/views/login_view.dart';
-import 'features/objects/views/objects_view.dart';
+import 'features/objects/admin/views/objects_view.dart';
 import 'features/home/views/home_view.dart';
 
 void main() async {
