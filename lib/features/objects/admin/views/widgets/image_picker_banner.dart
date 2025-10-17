@@ -4,11 +4,13 @@ import 'package:flutter/services.dart';
 class ImagePickerBanner extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onTap;
+  final bool isUploading;
 
   const ImagePickerBanner({
     Key? key,
     required this.imageUrl,
     required this.onTap,
+    this.isUploading = false,
   }) : super(key: key);
 
   @override
@@ -38,10 +40,12 @@ class ImagePickerBanner extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onTap();
-          },
+          onTap: isUploading
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  onTap();
+                },
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -75,16 +79,30 @@ class ImagePickerBanner extends StatelessWidget {
               )
             : null,
       ),
-      child: imageUrl.isEmpty
-          ? Icon(
-              Icons.add_photo_alternate_rounded,
-              size: 36,
-              color: const Color(0xFF1565C0).withOpacity(0.6),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(imageUrl, fit: BoxFit.cover),
-            ),
+      child: _buildPreviewContent(),
+    );
+  }
+
+  Widget _buildPreviewContent() {
+    if (isUploading) {
+      return const Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2.5),
+        ),
+      );
+    }
+    if (imageUrl.isEmpty) {
+      return Icon(
+        Icons.add_photo_alternate_rounded,
+        size: 36,
+        color: const Color(0xFF1565C0).withOpacity(0.6),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.network(imageUrl, fit: BoxFit.cover),
     );
   }
 
@@ -104,7 +122,9 @@ class ImagePickerBanner extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            imageUrl.isEmpty
+            isUploading
+                ? 'Subiendo imagen...'
+                : imageUrl.isEmpty
                 ? 'Toca para añadir una imagen (opcional)'
                 : 'Toca para cambiar la imagen',
             style: TextStyle(
@@ -126,7 +146,11 @@ class ImagePickerBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
-        imageUrl.isEmpty ? Icons.camera_alt_rounded : Icons.edit_rounded,
+        isUploading
+            ? Icons.hourglass_top_rounded
+            : (imageUrl.isEmpty
+                  ? Icons.camera_alt_rounded
+                  : Icons.edit_rounded),
         color: const Color(0xFF1565C0),
         size: 24,
       ),

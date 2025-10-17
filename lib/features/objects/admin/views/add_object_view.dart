@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter/services.dart';
 import '../viewmodels/add_object_viewmodel.dart';
 import '../../models/object_lost.dart';
@@ -7,6 +8,7 @@ import 'widgets/add_object_header.dart';
 import 'widgets/image_picker_banner.dart';
 import 'widgets/add_object_form.dart';
 import 'widgets/form_action_buttons.dart';
+// La selección y subida se delega al ViewModel
 
 class AddObjectView extends StatefulWidget {
   const AddObjectView({Key? key}) : super(key: key);
@@ -25,7 +27,8 @@ class _AddObjectViewState extends State<AddObjectView>
       TextEditingController();
   DateTime _selectedDate = DateTime.now();
   String _imageUrl = '';
-  bool _isLoading = false;
+  bool _isLoading = false; // solo para guardar
+  bool _isUploadingImage = false; // para subida de imagen
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -157,6 +160,7 @@ class _AddObjectViewState extends State<AddObjectView>
                           child: ImagePickerBanner(
                             imageUrl: _imageUrl,
                             onTap: _handleImagePick,
+                            isUploading: _isUploadingImage,
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -200,22 +204,74 @@ class _AddObjectViewState extends State<AddObjectView>
   }
 
   void _handleImagePick() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Wrap(
           children: [
-            Icon(Icons.photo_camera_rounded, color: Colors.white),
-            SizedBox(width: 12),
-            Expanded(child: Text('Función de imagen próximamente disponible')),
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded),
+              title: const Text('Elegir de la galería'),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await _pickAndUpload(fromCamera: false);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_camera_rounded),
+              title: const Text('Tomar una foto'),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await _pickAndUpload(fromCamera: true);
+              },
+            ),
           ],
         ),
-        backgroundColor: const Color(0xFF1565C0),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
       ),
     );
+  }
+
+  Future<void> _pickAndUpload({required bool fromCamera}) async {
+    setState(() => _isUploadingImage = true);
+    HapticFeedback.lightImpact();
+    final objectTempId = DateTime.now().millisecondsSinceEpoch.toString();
+    try {
+      final url = await _viewModel
+          .pickAndUploadImage(
+            fromCamera: fromCamera,
+            tempObjectId: objectTempId,
+          )
+          .timeout(const Duration(seconds: 35));
+
+      if (!mounted) return;
+      if (url != null) {
+        setState(() => _imageUrl = url);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Imagen subida correctamente'),
+            backgroundColor: Color(0xFF4CAF50),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } on TimeoutException {
+      if (mounted) {
+        _showErrorSnackBar(
+          'La subida de la imagen tardó demasiado. Intenta de nuevo.',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackBar('No se pudo subir la imagen: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingImage = false);
+      }
+    }
   }
 
   void _clearForm() {
@@ -250,6 +306,11 @@ class _AddObjectViewState extends State<AddObjectView>
   }
 
   Future<void> _handleSubmit() async {
+    // Evitar guardar mientras se sube la imagen
+    if (_isUploadingImage) {
+      _showErrorSnackBar('Espera a que termine de subir la imagen.');
+      return;
+    }
     // Validar formulario
     final validation = _viewModel.validateFormData(
       _nameController.text,
@@ -294,7 +355,6 @@ class _AddObjectViewState extends State<AddObjectView>
         setState(() => _isLoading = false);
 
         _showSuccessDialog();
-
         // Limpiar formulario
         _nameController.clear();
         _descController.clear();

@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permiso de cámara (algunas ROMs requieren declaración explícita) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Permiso de Internet para Firebase Auth/Firestore/Storage -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="objetos_perdidos_upt"
         android:name="${applicationName}"

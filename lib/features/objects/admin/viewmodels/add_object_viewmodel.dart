@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/object_lost.dart';
 import '../../models/entrega.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../../services/storage_service.dart';
 
 class AddObjectViewModel {
   final _db = FirebaseFirestore.instance;
+  final ImagePicker _picker = ImagePicker();
+  final StorageService _storage = StorageService();
 
   /// Guarda un objeto individual
   Future<void> addObject(ObjectLost object) async {
@@ -69,5 +73,25 @@ class AddObjectViewModel {
       return 'La fecha no puede ser mayor a un año atrás';
     }
     return null; // Sin errores
+  }
+
+  /// Abre la galería o cámara, sube a Storage y devuelve la URL
+  Future<String?> pickAndUploadImage({
+    required bool fromCamera,
+    required String tempObjectId,
+  }) async {
+    final source = fromCamera ? ImageSource.camera : ImageSource.gallery;
+    final XFile? picked = await _picker.pickImage(
+      source: source,
+      maxWidth: 1600,
+      maxHeight: 1600,
+      imageQuality: 85,
+    );
+    if (picked == null) return null;
+    final url = await _storage.uploadObjectImage(
+      file: picked,
+      objectId: tempObjectId,
+    );
+    return url;
   }
 }
