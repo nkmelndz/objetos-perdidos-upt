@@ -155,26 +155,25 @@ Future<Entrega?> showEntregaDialog({
                         onPressed: () {
                           HapticFeedback.lightImpact();
                           final entrega = Entrega(
-                            id: DateTime.now()
-                                .millisecondsSinceEpoch
+                            id: DateTime.now().millisecondsSinceEpoch
                                 .toString(),
                             nombreEncontradoPor:
                                 nombreEncontradoPorController.text,
                             nombreDevueltoA:
                                 nombreDevueltoAController.text.isNotEmpty
-                                    ? nombreDevueltoAController.text
-                                    : null,
+                                ? nombreDevueltoAController.text
+                                : null,
                             codigoEstudiante:
                                 codigoEstudianteController.text.isNotEmpty
-                                    ? codigoEstudianteController.text
-                                    : null,
+                                ? codigoEstudianteController.text
+                                : null,
                             fotoEntregaUrl: null,
                             fechaEntrega: fechaEntrega,
                             userId: AuthService.getCurrentUserId(),
                             observaciones:
                                 observacionesController.text.isNotEmpty
-                                    ? observacionesController.text
-                                    : null,
+                                ? observacionesController.text
+                                : null,
                           );
                           Navigator.pop(dialogContext, entrega);
                         },
@@ -315,10 +314,7 @@ class _FormField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xFF4CAF50),
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 2),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -365,11 +361,7 @@ class _DatePickerFieldState extends State<_DatePickerField> {
       children: [
         Row(
           children: [
-            const Icon(
-              Icons.event_rounded,
-              color: Color(0xFF4CAF50),
-              size: 18,
-            ),
+            const Icon(Icons.event_rounded, color: Color(0xFF4CAF50), size: 18),
             const SizedBox(width: 8),
             Text(
               'Fecha de entrega',

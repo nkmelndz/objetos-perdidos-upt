@@ -23,10 +23,7 @@ Future<ObjectLost?> showEditObjectDialog({
               borderRadius: BorderRadius.circular(20),
             ),
             child: Container(
-              constraints: const BoxConstraints(
-                maxWidth: 900,
-                maxHeight: 700,
-              ),
+              constraints: const BoxConstraints(maxWidth: 900, maxHeight: 700),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -251,11 +248,7 @@ class _FormField extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              color: const Color(0xFF1565C0),
-              size: 18,
-            ),
+            Icon(icon, color: const Color(0xFF1565C0), size: 18),
             const SizedBox(width: 8),
             Text(
               label,
@@ -294,10 +287,7 @@ class _FormField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xFF1565C0),
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: Color(0xFF1565C0), width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -394,11 +384,7 @@ class _DatePickerFieldState extends State<_DatePickerField> {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.event_rounded,
-                  color: Colors.grey[600],
-                  size: 18,
-                ),
+                Icon(Icons.event_rounded, color: Colors.grey[600], size: 18),
                 const SizedBox(width: 12),
                 Text(
                   '${_selectedDate.day.toString().padLeft(2, '0')}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.year}',

@@ -47,9 +47,7 @@ class ObjectCardAdmin extends StatelessWidget {
                 _buildImage(),
                 const SizedBox(width: 16),
                 // Información principal
-                Expanded(
-                  child: _buildInfo(),
-                ),
+                Expanded(child: _buildInfo()),
                 // Estado
                 _buildStatus(),
               ],
@@ -119,11 +117,7 @@ class ObjectCardAdmin extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           object.description,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            height: 1.3,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.3),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -134,10 +128,7 @@ class ObjectCardAdmin extends StatelessWidget {
   /// Construye el badge de estado
   Widget _buildStatus() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: ObjectLostUtils.statusToColor(object.status).withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
