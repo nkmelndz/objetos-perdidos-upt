@@ -407,10 +407,7 @@ class _AddObjectViewState extends State<AddObjectView>
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            _imageUrl,
-                            fit: BoxFit.cover,
-                          ),
+                          child: Image.network(_imageUrl, fit: BoxFit.cover),
                         ),
                 ),
                 const SizedBox(width: 20),
