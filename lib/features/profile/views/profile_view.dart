@@ -6,7 +6,6 @@ import '../../auth/views/login_view.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_info_card.dart';
 import 'widgets/profile_action_buttons.dart';
-import 'widgets/profile_stats_card.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -16,27 +15,62 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final ProfileViewModel _viewModel = ProfileViewModel();
   late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late AnimationController _scaleController;
   late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
+    
     _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _slideController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
+    );
+
+    // Iniciar animaciones en secuencia
     _fadeController.forward();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _slideController.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _scaleController.forward();
+    });
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
+    _slideController.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
 
@@ -86,11 +120,6 @@ class _ProfileViewState extends State<ProfileView>
     final userName = data['nombre'] ?? '';
     final userEmail = data['email'] ?? '';
     final isEditing = ValueNotifier(false);
-
-    // Stats simuladas (puedes obtenerlas del viewModel)
-    final objectsFound = data['objetosEncontrados'] ?? 0;
-    final objectsClaimed = data['objetosEntregados'] ?? 0;
-    final daysActive = data['diasActivo'] ?? 0;
 
     return Container(
       decoration: const BoxDecoration(
@@ -148,45 +177,46 @@ class _ProfileViewState extends State<ProfileView>
                       builder: (context, editing, _) => Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Tarjeta de estadísticas
-                          ProfileStatsCard(
-                            objectsFound: objectsFound,
-                            objectsClaimed: objectsClaimed,
-                            daysActive: daysActive,
-                            isTablet: isTablet,
+                          // Título de sección con slide
+                          SlideTransition(
+                            position: _slideAnimation,
+                            child: _buildSectionTitle('Información personal'),
                           ),
-
-                          // Título de sección
-                          _buildSectionTitle('Información personal'),
                           const SizedBox(height: 16),
 
-                          // Información del perfil
-                          ProfileInfoCard(
-                            nameController: nameController,
-                            phoneController: phoneController,
-                            bioController: bioController,
-                            isEditing: editing,
-                            isTablet: isTablet,
+                          // Información del perfil con scale
+                          ScaleTransition(
+                            scale: _scaleAnimation,
+                            child: ProfileInfoCard(
+                              nameController: nameController,
+                              phoneController: phoneController,
+                              bioController: bioController,
+                              isEditing: editing,
+                              isTablet: isTablet,
+                            ),
                           ),
 
                           const SizedBox(height: 32),
 
-                          // Botones de acción
-                          ProfileActionButtons(
-                            isEditing: editing,
-                            onEdit: () {
-                              HapticFeedback.lightImpact();
-                              isEditing.value = true;
-                            },
-                            onSave: () {
-                              _saveProfile(
-                                nameController,
-                                phoneController,
-                                bioController,
-                                isEditing,
-                              );
-                            },
-                            onLogout: _handleLogout,
+                          // Botones de acción con slide
+                          SlideTransition(
+                            position: _slideAnimation,
+                            child: ProfileActionButtons(
+                              isEditing: editing,
+                              onEdit: () {
+                                HapticFeedback.lightImpact();
+                                isEditing.value = true;
+                              },
+                              onSave: () {
+                                _saveProfile(
+                                  nameController,
+                                  phoneController,
+                                  bioController,
+                                  isEditing,
+                                );
+                              },
+                              onLogout: _handleLogout,
+                            ),
                           ),
 
                           const SizedBox(height: 24),
