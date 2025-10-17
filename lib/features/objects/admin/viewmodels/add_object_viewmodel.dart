@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/object_lost.dart';
 import '../../models/entrega.dart';
-import '../../utils/object_lost_utils.dart';
 
 class AddObjectViewModel {
   final _db = FirebaseFirestore.instance;

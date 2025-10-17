@@ -50,7 +50,7 @@ class ObjectLost {
   }
 }
 
-enum ObjectStatus { pendiente, entregado, reclamado }
+enum ObjectStatus { pendiente, entregado }
 
 String _statusToString(ObjectStatus status) {
   switch (status) {
@@ -58,8 +58,6 @@ String _statusToString(ObjectStatus status) {
       return 'pendiente';
     case ObjectStatus.entregado:
       return 'entregado';
-    case ObjectStatus.reclamado:
-      return 'reclamado';
   }
 }
 
@@ -67,8 +65,6 @@ ObjectStatus _statusFromString(String value) {
   switch (value) {
     case 'entregado':
       return ObjectStatus.entregado;
-    case 'reclamado':
-      return ObjectStatus.reclamado;
     case 'pendiente':
     default:
       return ObjectStatus.pendiente;

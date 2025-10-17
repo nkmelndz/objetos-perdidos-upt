@@ -47,7 +47,7 @@ class _ObjectsViewState extends State<ObjectsView> {
                   ...ObjectStatus.values.map(
                     (status) => DropdownMenuItem<ObjectStatus?>(
                       value: status,
-                      child: Text(_statusText(status)),
+                      child: Text(ObjectLostUtils.statusToText(status)),
                     ),
                   ),
                 ],
@@ -116,7 +116,7 @@ class _ObjectsViewState extends State<ObjectsView> {
                               ),
                         title: Text(obj.name),
                         subtitle: Text(
-                          'Encontrado: ${_formatDate(obj.foundDate)}\n${obj.description}',
+                          'Encontrado: ${ObjectLostUtils.formatDate(obj.foundDate)}\n${obj.description}',
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -127,11 +127,11 @@ class _ObjectsViewState extends State<ObjectsView> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _statusColor(obj.status),
+                                color: ObjectLostUtils.statusToColor(obj.status),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                _statusText(obj.status),
+                                ObjectLostUtils.statusToText(obj.status),
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ),
@@ -264,31 +264,5 @@ class _ObjectsViewState extends State<ObjectsView> {
         );
       },
     );
-  }
-
-  static String _statusText(ObjectStatus status) {
-    switch (status) {
-      case ObjectStatus.pendiente:
-        return 'Pendiente';
-      case ObjectStatus.entregado:
-        return 'Entregado';
-      case ObjectStatus.reclamado:
-        return 'Reclamado';
-    }
-  }
-
-  static Color _statusColor(ObjectStatus status) {
-    switch (status) {
-      case ObjectStatus.pendiente:
-        return Colors.orange;
-      case ObjectStatus.entregado:
-        return Colors.green;
-      case ObjectStatus.reclamado:
-        return Colors.blueGrey;
-    }
-  }
-
-  static String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }

@@ -9,8 +9,6 @@ class ObjectLostUtils {
         return 'Pendiente';
       case ObjectStatus.entregado:
         return 'Entregado';
-      case ObjectStatus.reclamado:
-        return 'Reclamado';
     }
   }
 
@@ -21,8 +19,6 @@ class ObjectLostUtils {
         return Colors.orange;
       case ObjectStatus.entregado:
         return Colors.green;
-      case ObjectStatus.reclamado:
-        return Colors.blueGrey;
     }
   }
 
