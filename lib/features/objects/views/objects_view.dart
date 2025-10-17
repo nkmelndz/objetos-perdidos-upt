@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../admin/viewmodels/objects_viewmodel.dart';
 import '../models/object_lost.dart';
 import '../models/entrega.dart';
+import '../../../services/auth_service.dart';
 
 class ObjectsView extends StatefulWidget {
   const ObjectsView({Key? key}) : super(key: key);
@@ -251,7 +252,7 @@ class _ObjectsViewState extends State<ObjectsView> {
                   codigoEstudiante: codigoEstudianteController.text.isNotEmpty ? codigoEstudianteController.text : null,
                   fotoEntregaUrl: null, // Se puede implementar después
                   fechaEntrega: fechaEntrega,
-                  adminId: 'admin', // Se puede mejorar para obtener el admin actual
+                  userId: AuthService.getCurrentUserId(),
                   observaciones: observacionesController.text.isNotEmpty ? observacionesController.text : null,
                 );
                 Navigator.pop(context, entrega);

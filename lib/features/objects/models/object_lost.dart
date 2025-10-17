@@ -7,7 +7,7 @@ class ObjectLost {
   final DateTime foundDate;
   final String imageUrl;
   final ObjectStatus status;
-  final String adminId;
+  final String userId;
   final DateTime createdAt;
 
   ObjectLost({
@@ -18,7 +18,7 @@ class ObjectLost {
     required this.foundDate,
     required this.imageUrl,
     required this.status,
-    required this.adminId,
+    required this.userId,
     required this.createdAt,
   });
 
@@ -29,7 +29,7 @@ class ObjectLost {
     'fecha_encontrado': foundDate.toIso8601String(),
     'imagen_url': imageUrl,
     'estado': _statusToString(status),
-    'id_admin': adminId,
+    'id_user': userId,
     'fecha_registro': createdAt.toIso8601String(),
   };
 
@@ -43,7 +43,7 @@ class ObjectLost {
           DateTime.tryParse(map['fecha_encontrado'] ?? '') ?? DateTime.now(),
       imageUrl: (map['imagen_url'] ?? '') as String,
       status: _statusFromString(map['estado'] ?? 'pendiente'),
-      adminId: (map['id_admin'] ?? '') as String,
+      userId: (map['id_user'] ?? '') as String,
       createdAt:
           DateTime.tryParse(map['fecha_registro'] ?? '') ?? DateTime.now(),
     );

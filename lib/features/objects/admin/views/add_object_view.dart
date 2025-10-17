@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../viewmodels/add_object_viewmodel.dart';
 import '../../models/object_lost.dart';
+import '../../../../services/auth_service.dart';
 
 class AddObjectView extends StatefulWidget {
   const AddObjectView({Key? key}) : super(key: key);
@@ -122,7 +123,7 @@ class _AddObjectViewState extends State<AddObjectView> {
                   foundDate: _selectedDate,
                   imageUrl: _imageUrl,
                   status: ObjectStatus.pendiente,
-                  adminId: 'admin',
+                  userId: AuthService.getCurrentUserId() ?? 'unknown',
                   createdAt: DateTime.now(),
                 );
 
