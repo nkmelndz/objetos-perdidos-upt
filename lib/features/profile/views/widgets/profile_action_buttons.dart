@@ -5,14 +5,14 @@ class ProfileActionButtons extends StatelessWidget {
   final bool isEditing;
   final VoidCallback onEdit;
   final VoidCallback onSave;
-  final VoidCallback onLogout;
+  final VoidCallback? onLogout; // Hacer opcional
 
   const ProfileActionButtons({
     Key? key,
     required this.isEditing,
     required this.onEdit,
     required this.onSave,
-    required this.onLogout,
+    this.onLogout, // Opcional
   }) : super(key: key);
 
   @override
@@ -76,41 +76,42 @@ class ProfileActionButtons extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
-
-        // Botón de cerrar sesión
-        Container(
-          width: double.infinity,
-          height: 56,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFF1565C0), width: 2),
-          ),
-          child: ElevatedButton.icon(
-            icon: const Icon(Icons.logout_rounded, size: 24),
-            label: const Text(
-              'Cerrar sesión',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
+        // Botón de cerrar sesión (solo si se proporciona callback)
+        if (onLogout != null) ...[
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF1565C0), width: 2),
             ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF1565C0),
-              shadowColor: Colors.transparent,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.logout_rounded, size: 24),
+              label: const Text(
+                'Cerrar sesión',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
               ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF1565C0),
+                shadowColor: Colors.transparent,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                _showLogoutDialog(context, onLogout!);
+              },
             ),
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              _showLogoutDialog(context, onLogout);
-            },
           ),
-        ),
+        ],
       ],
     );
   }

@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/views/login_view.dart';
-import '../../auth/viewmodels/login_viewmodel.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_info_card.dart';
 import 'widgets/profile_action_buttons.dart';
+import 'widgets/change_password_card.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -57,7 +57,6 @@ class _ProfileViewState extends State<ProfileView>
       CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
     );
 
-    // Iniciar animaciones en secuencia
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
       _slideController.forward();
@@ -134,7 +133,6 @@ class _ProfileViewState extends State<ProfileView>
       child: SafeArea(
         child: Column(
           children: [
-            // Header con animación
             FadeTransition(
               opacity: _fadeAnimation,
               child: ProfileHeader(
@@ -145,8 +143,6 @@ class _ProfileViewState extends State<ProfileView>
                 onEditPhoto: _handleEditPhoto,
               ),
             ),
-
-            // Contenido con scroll
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -178,14 +174,14 @@ class _ProfileViewState extends State<ProfileView>
                       builder: (context, editing, _) => Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Título de sección con slide
                           SlideTransition(
                             position: _slideAnimation,
-                            child: _buildSectionTitle('Información personal'),
+                            child: _buildSectionTitle(
+                              'Información personal',
+                              Icons.person_outline_rounded,
+                            ),
                           ),
                           const SizedBox(height: 16),
-
-                          // Información del perfil con scale
                           ScaleTransition(
                             scale: _scaleAnimation,
                             child: ProfileInfoCard(
@@ -196,10 +192,7 @@ class _ProfileViewState extends State<ProfileView>
                               isTablet: isTablet,
                             ),
                           ),
-
-                          const SizedBox(height: 32),
-
-                          // Botones de acción con slide
+                          const SizedBox(height: 24),
                           SlideTransition(
                             position: _slideAnimation,
                             child: ProfileActionButtons(
@@ -216,15 +209,28 @@ class _ProfileViewState extends State<ProfileView>
                                   isEditing,
                                 );
                               },
-                              onLogout: _handleLogout,
+                              onLogout: null, // Quitamos logout de aquí
                             ),
                           ),
+                          const SizedBox(height: 32),
+                          SlideTransition(
+                            position: _slideAnimation,
+                            child: _buildSectionTitle(
+                              'Seguridad',
+                              Icons.shield_outlined,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ScaleTransition(
+                            scale: _scaleAnimation,
+                            child: ChangePasswordCard(isTablet: isTablet),
+                          ),
                           const SizedBox(height: 24),
-
-                          // Sección cambiar contraseña
-                          _buildSectionTitle('Seguridad'),
-                          const SizedBox(height: 12),
-                          _ChangePasswordCard(isTablet: isTablet),
+                          // Botón de cerrar sesión debajo de seguridad
+                          SlideTransition(
+                            position: _slideAnimation,
+                            child: _buildLogoutButton(),
+                          ),
                           const SizedBox(height: 24),
                         ],
                       ),
@@ -239,20 +245,21 @@ class _ProfileViewState extends State<ProfileView>
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, IconData icon) {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFF1565C0).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF1565C0).withOpacity(0.15),
+                const Color(0xFF1565C0).withOpacity(0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.info_outline_rounded,
-            color: Color(0xFF1565C0),
-            size: 20,
-          ),
+          child: Icon(icon, color: const Color(0xFF1565C0), size: 22),
         ),
         const SizedBox(width: 12),
         Text(
@@ -293,7 +300,6 @@ class _ProfileViewState extends State<ProfileView>
     TextEditingController bioController,
     ValueNotifier<bool> isEditing,
   ) {
-    // Validar que el nombre no esté vacío
     if (nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -341,6 +347,128 @@ class _ProfileViewState extends State<ProfileView>
     );
   }
 
+  Widget _buildLogoutButton() {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.red[400]!, width: 2),
+      ),
+      child: ElevatedButton.icon(
+        icon: const Icon(Icons.logout_rounded, size: 24),
+        label: const Text(
+          'Cerrar sesión',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.red[600],
+          shadowColor: Colors.transparent,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        onPressed: () {
+          HapticFeedback.lightImpact();
+          _showLogoutDialog();
+        },
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.logout_rounded,
+                color: Colors.red[600],
+                size: 48,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '¿Cerrar sesión?',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF2C3E50),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: const Text(
+          '¿Estás seguro que deseas cerrar tu sesión? Deberás volver a iniciar sesión para acceder.',
+          style: TextStyle(fontSize: 15, color: Color(0xFF5A6C7D), height: 1.5),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _handleLogout();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[600],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Cerrar sesión',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _handleLogout() async {
     await FirebaseAuth.instance.signOut();
     if (mounted) {
@@ -349,177 +477,5 @@ class _ProfileViewState extends State<ProfileView>
         (route) => false,
       );
     }
-  }
-}
-
-class _ChangePasswordCard extends StatefulWidget {
-  final bool isTablet;
-  const _ChangePasswordCard({required this.isTablet});
-
-  @override
-  State<_ChangePasswordCard> createState() => _ChangePasswordCardState();
-}
-
-class _ChangePasswordCardState extends State<_ChangePasswordCard> {
-  final _currentCtrl = TextEditingController();
-  final _newCtrl = TextEditingController();
-  final _confirmCtrl = TextEditingController();
-  bool _isLoading = false;
-  bool _obscureCurrent = true;
-  bool _obscureNew = true;
-  bool _obscureConfirm = true;
-  final _vm = LoginViewModel();
-
-  @override
-  void dispose() {
-    _currentCtrl.dispose();
-    _newCtrl.dispose();
-    _confirmCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-        border: Border.all(color: const Color(0xFFE9ECEF)),
-      ),
-      padding: EdgeInsets.all(widget.isTablet ? 24 : 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _passwordField(
-            controller: _currentCtrl,
-            label: 'Contraseña actual',
-            obscure: _obscureCurrent,
-            onToggle: () => setState(() => _obscureCurrent = !_obscureCurrent),
-          ),
-          const SizedBox(height: 12),
-          _passwordField(
-            controller: _newCtrl,
-            label: 'Nueva contraseña',
-            obscure: _obscureNew,
-            onToggle: () => setState(() => _obscureNew = !_obscureNew),
-          ),
-          const SizedBox(height: 12),
-          _passwordField(
-            controller: _confirmCtrl,
-            label: 'Confirmar nueva contraseña',
-            obscure: _obscureConfirm,
-            onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 44,
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
-                : ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1565C0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: _handleChangePassword,
-                    icon: const Icon(
-                      Icons.lock_reset_rounded,
-                      color: Colors.white,
-                    ),
-                    label: const Text(
-                      'Actualizar contraseña',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _passwordField({
-    required TextEditingController controller,
-    required String label,
-    required bool obscure,
-    required VoidCallback onToggle,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscure,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: const Icon(Icons.lock_outline_rounded),
-        suffixIcon: IconButton(
-          icon: Icon(
-            obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
-          ),
-          onPressed: onToggle,
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  Future<void> _handleChangePassword() async {
-    final current = _currentCtrl.text.trim();
-    final newPwd = _newCtrl.text.trim();
-    final confirm = _confirmCtrl.text.trim();
-
-    if (current.isEmpty || newPwd.isEmpty || confirm.isEmpty) {
-      _showSnack('Completa todos los campos', isError: true);
-      return;
-    }
-    if (newPwd.length < 6) {
-      _showSnack(
-        'La nueva contraseña debe tener al menos 6 caracteres',
-        isError: true,
-      );
-      return;
-    }
-    if (newPwd != confirm) {
-      _showSnack('Las contraseñas no coinciden', isError: true);
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    final err = await _vm.changePassword(
-      currentPassword: current,
-      newPassword: newPwd,
-    );
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    if (err == null) {
-      _currentCtrl.clear();
-      _newCtrl.clear();
-      _confirmCtrl.clear();
-      _showSnack('Contraseña actualizada correctamente');
-    } else {
-      _showSnack(err, isError: true);
-    }
-  }
-
-  void _showSnack(String msg, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: isError ? Colors.red[600] : const Color(0xFF4CAF50),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 }
