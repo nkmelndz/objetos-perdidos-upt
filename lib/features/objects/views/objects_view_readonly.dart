@@ -85,31 +85,27 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
         child: SafeArea(
           child: Column(
             children: [
-              // Header moderno
+              // Header simplificado
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isTablet ? 32.0 : 24.0,
-                    vertical: 20.0,
+                    horizontal: isTablet ? 32.0 : 20.0,
+                    vertical: 16.0,
                   ),
                   child: Row(
                     children: [
-                      // Botón de regreso moderno
+                      // Botón de regreso minimalista
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
-                          ),
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: IconButton(
                           icon: const Icon(
                             Icons.arrow_back_ios_rounded,
                             color: Colors.white,
-                            size: 20,
+                            size: 18,
                           ),
                           onPressed: () {
                             HapticFeedback.selectionClick();
@@ -118,29 +114,15 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Título
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Objetos Perdidos',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: isTablet ? 24 : 20,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            Text(
-                              'Consulta los objetos disponibles',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: isTablet ? 16 : 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
+                      // Título simplificado
+                      Text(
+                        'Objetos Perdidos',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isTablet ? 26 : 22,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                          fontFamily: 'SF Pro Display',
                         ),
                       ),
                     ],
@@ -169,16 +151,16 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                     position: _slideAnimation,
                     child: Column(
                       children: [
-                        // Barra de búsqueda y filtros
+                        // Barra de búsqueda y filtros mejorados
                         Padding(
-                          padding: EdgeInsets.all(isTablet ? 32.0 : 24.0),
+                          padding: EdgeInsets.all(isTablet ? 24.0 : 20.0),
                           child: Column(
                             children: [
-                              // Campo de búsqueda moderno
+                              // Campo de búsqueda
                               Container(
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF8F9FA),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
                                     color: const Color(0xFFE9ECEF),
                                     width: 1,
@@ -189,17 +171,17 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                     hintText: 'Buscar objeto perdido...',
                                     hintStyle: TextStyle(
                                       color: Colors.grey[500],
-                                      fontSize: 16,
+                                      fontSize: 15,
                                     ),
                                     prefixIcon: Icon(
                                       Icons.search_rounded,
                                       color: const Color(0xFF1565C0),
-                                      size: 24,
+                                      size: 22,
                                     ),
                                     border: InputBorder.none,
                                     contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 16,
+                                      horizontal: 18,
+                                      vertical: 14,
                                     ),
                                   ),
                                   onChanged: (value) {
@@ -209,56 +191,50 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                 ),
                               ),
                               
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 20),
                               
-                              // Filtros como chips
-                              Row(
-                                children: [
-                                  Text(
-                                    'Filtrar por estado:',
-                                    style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: [
-                                          _buildFilterChip(
-                                            label: 'Todos',
-                                            isSelected: _viewModel.currentFilter == null,
-                                            onTap: () {
-                                              _viewModel.setFilter(null);
-                                              setState(() {});
-                                            },
-                                          ),
-                                          const SizedBox(width: 8),
-                                          _buildFilterChip(
-                                            label: 'Pendiente',
-                                            isSelected: _viewModel.currentFilter == ObjectStatus.pendiente,
-                                            onTap: () {
-                                              _viewModel.setFilter(ObjectStatus.pendiente);
-                                              setState(() {});
-                                            },
-                                          ),
-                                          const SizedBox(width: 8),
-                                          _buildFilterChip(
-                                            label: 'Entregado',
-                                            isSelected: _viewModel.currentFilter == ObjectStatus.entregado,
-                                            onTap: () {
-                                              _viewModel.setFilter(ObjectStatus.entregado);
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ],
+                              // Filtros mejorados como segmented control
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F3F4),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Todos',
+                                        isSelected: _viewModel.currentFilter == null,
+                                        onTap: () {
+                                          _viewModel.setFilter(null);
+                                          setState(() {});
+                                        },
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Pendiente',
+                                        isSelected: _viewModel.currentFilter == ObjectStatus.pendiente,
+                                        onTap: () {
+                                          _viewModel.setFilter(ObjectStatus.pendiente);
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Entregado',
+                                        isSelected: _viewModel.currentFilter == ObjectStatus.entregado,
+                                        onTap: () {
+                                          _viewModel.setFilter(ObjectStatus.entregado);
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -310,7 +286,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
     );
   }
 
-  Widget _buildFilterChip({
+  Widget _buildSegmentedButton({
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
@@ -322,25 +298,30 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected 
-              ? const Color(0xFF1565C0)
-              : Colors.grey[100],
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected 
-                ? const Color(0xFF1565C0)
-                : Colors.grey[300]!,
-            width: 1,
-          ),
+              ? Colors.white
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ] : null,
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.grey[700],
-            fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected 
+                  ? const Color(0xFF1565C0)
+                  : Colors.grey[600],
+              fontSize: 14,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ),
           ),
         ),
       ),
