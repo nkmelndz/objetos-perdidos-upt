@@ -63,9 +63,7 @@ class ProfileInfoCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: enabled
-              ? iconColor.withOpacity(0.3)
-              : Colors.grey[200]!,
+          color: enabled ? iconColor.withOpacity(0.3) : Colors.grey[200]!,
           width: enabled ? 2 : 1.5,
         ),
         boxShadow: [

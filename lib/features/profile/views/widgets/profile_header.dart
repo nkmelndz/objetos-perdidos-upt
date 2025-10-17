@@ -33,10 +33,7 @@ class ProfileHeader extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 4,
-                  ),
+                  border: Border.all(color: Colors.white, width: 4),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -48,8 +45,9 @@ class ProfileHeader extends StatelessWidget {
                 child: CircleAvatar(
                   radius: isTablet ? 70 : 60,
                   backgroundColor: Colors.white,
-                  backgroundImage:
-                      photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null,
+                  backgroundImage: photoUrl.isNotEmpty
+                      ? NetworkImage(photoUrl)
+                      : null,
                   child: photoUrl.isEmpty
                       ? Icon(
                           Icons.person_rounded,
@@ -83,7 +81,7 @@ class ProfileHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Nombre
           Text(
             userName.isNotEmpty ? userName : 'Usuario',
@@ -96,7 +94,7 @@ class ProfileHeader extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          
+
           // Email
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -107,11 +105,7 @@ class ProfileHeader extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.email_rounded,
-                  color: Colors.white,
-                  size: 16,
-                ),
+                const Icon(Icons.email_rounded, color: Colors.white, size: 16),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(

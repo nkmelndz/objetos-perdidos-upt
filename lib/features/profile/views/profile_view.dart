@@ -69,10 +69,7 @@ class _ProfileViewState extends State<ProfileView>
         ),
       ),
       child: const Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
-          strokeWidth: 3,
-        ),
+        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
       ),
     );
   }
@@ -242,16 +239,12 @@ class _ProfileViewState extends State<ProfileView>
           children: [
             Icon(Icons.photo_camera_rounded, color: Colors.white),
             SizedBox(width: 12),
-            Expanded(
-              child: Text('Función de foto próximamente disponible'),
-            ),
+            Expanded(child: Text('Función de foto próximamente disponible')),
           ],
         ),
         backgroundColor: const Color(0xFF1565C0),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 2),
       ),
@@ -305,9 +298,7 @@ class _ProfileViewState extends State<ProfileView>
         ),
         backgroundColor: const Color(0xFF4CAF50),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 2),
       ),

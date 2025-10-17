@@ -34,10 +34,11 @@ class ProfileActionButtons extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: (isEditing
-                        ? const Color(0xFF4CAF50)
-                        : const Color(0xFFFFC107))
-                    .withOpacity(0.4),
+                color:
+                    (isEditing
+                            ? const Color(0xFF4CAF50)
+                            : const Color(0xFFFFC107))
+                        .withOpacity(0.4),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -74,19 +75,16 @@ class ProfileActionButtons extends StatelessWidget {
             },
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Botón de cerrar sesión
         Container(
           width: double.infinity,
           height: 56,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: const Color(0xFF1565C0),
-              width: 2,
-            ),
+            border: Border.all(color: const Color(0xFF1565C0), width: 2),
           ),
           child: ElevatedButton.icon(
             icon: const Icon(Icons.logout_rounded, size: 24),
@@ -121,9 +119,7 @@ class ProfileActionButtons extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Column(
           children: [
             Container(
@@ -152,11 +148,7 @@ class ProfileActionButtons extends StatelessWidget {
         ),
         content: const Text(
           '¿Estás seguro que deseas cerrar tu sesión? Deberás volver a iniciar sesión para acceder.',
-          style: TextStyle(
-            fontSize: 15,
-            color: Color(0xFF5A6C7D),
-            height: 1.5,
-          ),
+          style: TextStyle(fontSize: 15, color: Color(0xFF5A6C7D), height: 1.5),
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -199,10 +191,7 @@ class ProfileActionButtons extends StatelessWidget {
                   ),
                   child: const Text(
                     'Cerrar sesión',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                 ),
               ),
