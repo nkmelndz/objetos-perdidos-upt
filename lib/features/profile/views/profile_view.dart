@@ -219,12 +219,12 @@ class _ProfileViewState extends State<ProfileView>
                               onLogout: _handleLogout,
                             ),
                           ),
-                            const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                            // Sección cambiar contraseña
-                            _buildSectionTitle('Seguridad'),
-                            const SizedBox(height: 12),
-                            _ChangePasswordCard(isTablet: isTablet),
+                          // Sección cambiar contraseña
+                          _buildSectionTitle('Seguridad'),
+                          const SizedBox(height: 12),
+                          _ChangePasswordCard(isTablet: isTablet),
                           const SizedBox(height: 24),
                         ],
                       ),
@@ -421,9 +421,7 @@ class _ChangePasswordCardState extends State<_ChangePasswordCard> {
           SizedBox(
             height: 44,
             child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
                 : ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1565C0),
@@ -432,10 +430,16 @@ class _ChangePasswordCardState extends State<_ChangePasswordCard> {
                       ),
                     ),
                     onPressed: _handleChangePassword,
-                    icon: const Icon(Icons.lock_reset_rounded, color: Colors.white),
+                    icon: const Icon(
+                      Icons.lock_reset_rounded,
+                      color: Colors.white,
+                    ),
                     label: const Text(
                       'Actualizar contraseña',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
           ),
@@ -457,7 +461,9 @@ class _ChangePasswordCardState extends State<_ChangePasswordCard> {
         labelText: label,
         prefixIcon: const Icon(Icons.lock_outline_rounded),
         suffixIcon: IconButton(
-          icon: Icon(obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+          icon: Icon(
+            obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+          ),
           onPressed: onToggle,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -475,7 +481,10 @@ class _ChangePasswordCardState extends State<_ChangePasswordCard> {
       return;
     }
     if (newPwd.length < 6) {
-      _showSnack('La nueva contraseña debe tener al menos 6 caracteres', isError: true);
+      _showSnack(
+        'La nueva contraseña debe tener al menos 6 caracteres',
+        isError: true,
+      );
       return;
     }
     if (newPwd != confirm) {
@@ -484,7 +493,10 @@ class _ChangePasswordCardState extends State<_ChangePasswordCard> {
     }
 
     setState(() => _isLoading = true);
-    final err = await _vm.changePassword(currentPassword: current, newPassword: newPwd);
+    final err = await _vm.changePassword(
+      currentPassword: current,
+      newPassword: newPwd,
+    );
     if (!mounted) return;
     setState(() => _isLoading = false);
 
