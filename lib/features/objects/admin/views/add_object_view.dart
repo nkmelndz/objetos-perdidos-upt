@@ -256,17 +256,10 @@ class _AddObjectViewState extends State<AddObjectView>
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  Icons.add_box_rounded,
-                  color: Colors.white,
-                  size: 28,
-                ),
+              const Icon(
+                Icons.add_box_rounded,
+                color: Color(0xFFFFC107), // Amarillo acento
+                size: 48,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -308,10 +301,10 @@ class _AddObjectViewState extends State<AddObjectView>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1565C0).withOpacity(0.1),
+            color: const Color(0xFFFFC107).withOpacity(0.15),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: const Color(0xFF1565C0), size: 20),
+          child: Icon(icon, color: const Color(0xFFFFC107), size: 20),
         ),
         const SizedBox(width: 12),
         Text(
@@ -651,7 +644,7 @@ class _AddObjectViewState extends State<AddObjectView>
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1565C0), width: 2),
+        border: Border.all(color: const Color(0xFFFFC107), width: 2),
       ),
       child: ElevatedButton(
         onPressed: () {
@@ -660,7 +653,7 @@ class _AddObjectViewState extends State<AddObjectView>
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF1565C0),
+          foregroundColor: const Color(0xFFFFC107),
           shadowColor: Colors.transparent,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -749,12 +742,15 @@ class _AddObjectViewState extends State<AddObjectView>
       SnackBar(
         content: const Row(
           children: [
-            Icon(Icons.refresh_rounded, color: Colors.white),
+            Icon(Icons.refresh_rounded, color: Color(0xFF01579B)),
             SizedBox(width: 12),
-            Text('Formulario limpiado'),
+            Text(
+              'Formulario limpiado',
+              style: TextStyle(color: Color(0xFF01579B)),
+            ),
           ],
         ),
-        backgroundColor: Colors.grey[700],
+        backgroundColor: const Color(0xFFFFC107),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -856,12 +852,12 @@ class _AddObjectViewState extends State<AddObjectView>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: const Color(0xFFFFC107).withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.check_circle,
-                color: Colors.green,
+                color: Color(0xFFFFC107),
                 size: 48,
               ),
             ),
