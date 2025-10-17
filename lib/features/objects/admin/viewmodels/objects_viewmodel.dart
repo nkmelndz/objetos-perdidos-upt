@@ -14,7 +14,7 @@ class ObjectsViewModel {
 
   /// Actualiza el término de búsqueda
   void setSearch(String value) => _search = value;
-  
+
   /// Actualiza el filtro de estado
   void setFilter(ObjectStatus? status) => _filter = status;
 
@@ -28,7 +28,7 @@ class ObjectsViewModel {
           var list = snap.docs
               .map((d) => ObjectLost.fromMap(d.id, d.data()))
               .toList();
-          
+
           // Aplicar filtros
           return _applyFilters(list);
         });
@@ -38,7 +38,7 @@ class ObjectsViewModel {
   List<ObjectLost> _applyFilters(List<ObjectLost> objects) {
     return objects.where((obj) {
       return ObjectLostUtils.matchesSearch(obj, _search) &&
-             ObjectLostUtils.matchesStatus(obj, _filter);
+          ObjectLostUtils.matchesStatus(obj, _filter);
     }).toList();
   }
 
@@ -50,7 +50,7 @@ class ObjectsViewModel {
   Future<void> addEntrega(String objectId, Entrega entrega) async {
     final doc = _db.collection('objetos_perdidos').doc(objectId);
     await doc.update({'estado': 'entregado'});
-    
+
     // Buscar el documento de entrega existente y actualizarlo
     final entregaSnapshot = await doc.collection('entrega').limit(1).get();
     if (entregaSnapshot.docs.isNotEmpty) {
@@ -70,7 +70,7 @@ class ObjectsViewModel {
         .collection('entrega')
         .limit(1)
         .get();
-    
+
     if (entregaSnapshot.docs.isNotEmpty) {
       final data = entregaSnapshot.docs.first.data();
       return data['nombre_encontrado_por'] ?? '';
@@ -78,8 +78,29 @@ class ObjectsViewModel {
     return '';
   }
 
+  /// Obtiene la información completa de entrega de un objeto
+  Future<Entrega?> getEntregaByObjectId(String objectId) async {
+    final entregaSnapshot = await _db
+        .collection('objetos_perdidos')
+        .doc(objectId)
+        .collection('entrega')
+        .limit(1)
+        .get();
+
+    if (entregaSnapshot.docs.isNotEmpty) {
+      final doc = entregaSnapshot.docs.first;
+      return Entrega.fromMap(doc.id, doc.data());
+    }
+    return null;
+  }
+
   /// Valida los datos de un objeto antes de guardar
-  String? validateObjectData(String name, String description, String location, String nombreEncontradoPor) {
+  String? validateObjectData(
+    String name,
+    String description,
+    String location,
+    String nombreEncontradoPor,
+  ) {
     if (name.trim().isEmpty) {
       return 'El nombre del objeto es requerido';
     }

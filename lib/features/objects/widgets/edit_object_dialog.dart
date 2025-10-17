@@ -1,321 +1,424 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/object_lost.dart';
 
-Future<Map<String, dynamic>?> showEditObjectDialog({
+/// Muestra un diálogo para editar un objeto perdido
+Future<ObjectLost?> showEditObjectDialog({
   required BuildContext context,
   required ObjectLost object,
 }) async {
   final nameController = TextEditingController(text: object.name);
-  final descriptionController = TextEditingController(text: object.description);
+  final descController = TextEditingController(text: object.description);
   final locationController = TextEditingController(text: object.location);
   DateTime foundDate = object.foundDate;
-  ObjectStatus selectedStatus = object.status;
 
-  return showDialog<Map<String, dynamic>>(
+  return showDialog<ObjectLost>(
     context: context,
-    builder: (context) {
-      final screenWidth = MediaQuery.of(context).size.width;
-
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        insetPadding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.075,
-          vertical: 24,
-        ),
-        child: StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+    barrierDismissible: false,
+    builder: (dialogContext) {
+      return StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              constraints: const BoxConstraints(
+                maxWidth: 900,
+                maxHeight: 700,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Título
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1565C0).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            color: Color(0xFF1565C0),
+                            size: 24,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.blue,
-                          size: 28,
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Text(
+                            'Editar Objeto',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF2C3E50),
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Text(
-                        'Editar objeto',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Contenido
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Sección de información
+                            _DetailSection(
+                              title: 'Información del Objeto',
+                              icon: Icons.inventory_2_rounded,
+                              iconColor: const Color(0xFF1565C0),
+                            ),
+                            const SizedBox(height: 16),
+                            _FormField(
+                              controller: nameController,
+                              label: 'Nombre del objeto',
+                              icon: Icons.label_rounded,
+                            ),
+                            const SizedBox(height: 16),
+                            _FormField(
+                              controller: descController,
+                              label: 'Descripción',
+                              icon: Icons.description_rounded,
+                              maxLines: 3,
+                            ),
+                            const SizedBox(height: 16),
+                            _FormField(
+                              controller: locationController,
+                              label: 'Lugar encontrado',
+                              icon: Icons.location_on_rounded,
+                            ),
+                            const SizedBox(height: 16),
+                            _DatePickerField(
+                              foundDate: foundDate,
+                              onDateChanged: (newDate) {
+                                setStateDialog(() => foundDate = newDate);
+                              },
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildTextField(
-                            controller: nameController,
-                            label: 'Nombre del objeto',
-                            icon: Icons.inventory_2,
-                            hint: 'Ej: Celular Samsung',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildTextField(
-                            controller: descriptionController,
-                            label: 'Descripción',
-                            icon: Icons.description,
-                            hint: 'Detalles del objeto encontrado',
-                            maxLines: 3,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildTextField(
-                            controller: locationController,
-                            label: 'Lugar encontrado',
-                            icon: Icons.location_on,
-                            hint: 'Ej: Biblioteca, Laboratorio 3',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildDatePicker(
-                            context: context,
-                            selectedDate: foundDate,
-                            onDateChanged: (newDate) {
-                              setState(() => foundDate = newDate);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildStatusDropdown(
-                            selectedStatus: selectedStatus,
-                            onChanged: (newStatus) {
-                              setState(() => selectedStatus = newStatus!);
-                            },
-                          ),
-                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Cancelar',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          if (nameController.text.isEmpty ||
-                              descriptionController.text.isEmpty ||
-                              locationController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Por favor completa todos los campos',
-                                ),
-                                backgroundColor: Colors.red,
+                    const SizedBox(height: 20),
+                    // Botones de acción
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.pop(dialogContext);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF6A1B9A),
+                              side: const BorderSide(
+                                color: Color(0xFF6A1B9A),
+                                width: 1.5,
                               ),
-                            );
-                            return;
-                          }
-
-                          final result = {
-                            'name': nameController.text,
-                            'description': descriptionController.text,
-                            'location': locationController.text,
-                            'foundDate': foundDate,
-                            'status': selectedStatus,
-                          };
-                          Navigator.pop(context, result);
-                        },
-                        icon: const Icon(Icons.save),
-                        label: const Text(
-                          'Guardar cambios',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancelar',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-    },
-  );
-}
-
-Widget _buildTextField({
-  required TextEditingController controller,
-  required String label,
-  required IconData icon,
-  String? hint,
-  int maxLines = 1,
-}) {
-  return TextField(
-    controller: controller,
-    maxLines: maxLines,
-    style: const TextStyle(fontSize: 16),
-    decoration: InputDecoration(
-      labelText: label,
-      hintText: hint,
-      prefixIcon: Icon(icon, color: Colors.blue),
-      filled: true,
-      fillColor: Colors.grey[50],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.blue, width: 2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    ),
-  );
-}
-
-Widget _buildDatePicker({
-  required BuildContext context,
-  required DateTime selectedDate,
-  required Function(DateTime) onDateChanged,
-}) {
-  return InkWell(
-    onTap: () async {
-      final picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2020),
-        lastDate: DateTime.now(),
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: const ColorScheme.light(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-                surface: Colors.white,
-                onSurface: Colors.black,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              if (nameController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('El nombre es requerido'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+                              final edited = ObjectLost(
+                                id: object.id,
+                                name: nameController.text.trim(),
+                                description: descController.text.trim(),
+                                location: locationController.text.trim(),
+                                foundDate: foundDate,
+                                imageUrl: object.imageUrl,
+                                status: object.status,
+                                userId: object.userId,
+                                createdAt: object.createdAt,
+                              );
+                              Navigator.pop(dialogContext, edited);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1565C0),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              'Guardar',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: child!,
           );
         },
       );
-      if (picked != null) {
-        onDateChanged(picked);
-      }
     },
-    borderRadius: BorderRadius.circular(12),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.calendar_today, color: Colors.blue, size: 20),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Fecha encontrado',
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          Icon(Icons.edit_calendar, color: Colors.grey[400], size: 20),
-        ],
-      ),
-    ),
   );
 }
 
-Widget _buildStatusDropdown({
-  required ObjectStatus selectedStatus,
-  required Function(ObjectStatus?) onChanged,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-    decoration: BoxDecoration(
-      color: Colors.grey[50],
-      border: Border.all(color: Colors.grey[300]!),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Row(
+/// Widget para mostrar una sección de título
+class _DetailSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color iconColor;
+
+  const _DetailSection({
+    required this.title,
+    required this.icon,
+    required this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        const Icon(Icons.info_outline, color: Colors.blue, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<ObjectStatus>(
-              value: selectedStatus,
-              isExpanded: true,
-              items: ObjectStatus.values.map((status) {
-                return DropdownMenuItem<ObjectStatus>(
-                  value: status,
-                  child: Text(
-                    _statusToText(status),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                );
-              }).toList(),
-              onChanged: onChanged,
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: iconColor, size: 18),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF2C3E50),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Widget para mostrar un campo de formulario
+class _FormField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+  final IconData icon;
+  final int maxLines;
+
+  const _FormField({
+    required this.controller,
+    required this.label,
+    required this.icon,
+    this.maxLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              icon,
+              color: const Color(0xFF1565C0),
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          style: const TextStyle(
+            color: Color(0xFF2C3E50),
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+          decoration: InputDecoration(
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            filled: true,
+            fillColor: Colors.grey[50],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFF1565C0),
+                width: 2,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
             ),
           ),
         ),
       ],
-    ),
-  );
+    );
+  }
 }
 
-String _statusToText(ObjectStatus status) {
-  switch (status) {
-    case ObjectStatus.pendiente:
-      return 'Pendiente';
-    case ObjectStatus.entregado:
-      return 'Entregado';
+/// Widget para seleccionar fecha
+class _DatePickerField extends StatefulWidget {
+  final DateTime foundDate;
+  final Function(DateTime) onDateChanged;
+
+  const _DatePickerField({
+    required this.foundDate,
+    required this.onDateChanged,
+  });
+
+  @override
+  State<_DatePickerField> createState() => _DatePickerFieldState();
+}
+
+class _DatePickerFieldState extends State<_DatePickerField> {
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.foundDate;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Icons.calendar_today_rounded,
+              color: Color(0xFF1565C0),
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Fecha encontrada',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () async {
+            HapticFeedback.lightImpact();
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: _selectedDate,
+              firstDate: DateTime(2020),
+              lastDate: DateTime.now(),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: const ColorScheme.light(
+                      primary: Color(0xFF1565C0),
+                      onPrimary: Colors.white,
+                      surface: Colors.white,
+                      onSurface: Color(0xFF2C3E50),
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
+            );
+            if (picked != null) {
+              setState(() => _selectedDate = picked);
+              widget.onDateChanged(picked);
+            }
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.event_rounded,
+                  color: Colors.grey[600],
+                  size: 18,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  '${_selectedDate.day.toString().padLeft(2, '0')}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.year}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2C3E50),
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.arrow_drop_down_rounded,
+                  color: Colors.grey[400],
+                  size: 24,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
