@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../objects/admin/views/objects_view.dart';
-import '../../objects/admin/views/add_object_view.dart';
+import '../../objects/views/admin/list_objects/objects_view.dart';
+import '../../objects/views/admin/add_object/add_object_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../viewmodels/home_dashboard_viewmodel.dart';
 import '../models/dashboard_data.dart';
@@ -397,7 +397,8 @@ class _HomeContentState extends State<_HomeContent>
               )
             : ListView.builder(
                 controller: _scrollController,
-                shrinkWrap: false, // Cambiado a false para que ocupe todo el espacio
+                shrinkWrap:
+                    false, // Cambiado a false para que ocupe todo el espacio
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.only(right: 8),
                 itemCount: objects.length,

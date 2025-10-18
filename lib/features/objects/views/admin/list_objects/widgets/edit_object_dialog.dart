@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/object_lost.dart';
+import '../../../../models/object_lost.dart';
 
 /// Muestra un diálogo para editar un objeto perdido
 Future<ObjectLost?> showEditObjectDialog({

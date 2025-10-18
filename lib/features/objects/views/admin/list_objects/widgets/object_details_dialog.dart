@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/object_lost.dart';
-import '../models/entrega.dart';
-import '../utils/object_lost_utils.dart';
+import '../../../../models/object_lost.dart';
+import '../../../../models/entrega.dart';
+import '../../../../utils/object_lost_utils.dart';
 
 /// Muestra un diálogo con los detalles completos del objeto y su entrega
 Future<void> showObjectDetailsDialog({

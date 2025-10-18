@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import '../viewmodels/add_object_viewmodel.dart';
-import '../../models/object_lost.dart';
-import '../../../../services/auth_service.dart';
+import '../../../viewmodels/add_object_viewmodel.dart';
+import '../../../models/object_lost.dart';
+import '../../../../../services/auth_service.dart';
 import 'widgets/add_object_header.dart';
 import 'widgets/image_picker_banner.dart';
 import 'widgets/add_object_form.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/entrega.dart';
-import '../admin/viewmodels/objects_viewmodel.dart';
-import '../../../services/auth_service.dart';
+import '../../../../models/entrega.dart';
+import '../../../../viewmodels/objects_viewmodel.dart';
+import '../../../../../../services/auth_service.dart';
 
 /// Muestra un diálogo para registrar la entrega de un objeto
 Future<Entrega?> showEntregaDialog({

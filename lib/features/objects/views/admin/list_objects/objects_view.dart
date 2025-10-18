@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../viewmodels/objects_viewmodel.dart';
-import '../../models/object_lost.dart';
-import '../../widgets/object_card_admin.dart';
+import '../../../viewmodels/objects_viewmodel.dart';
+import '../../../models/object_lost.dart';
+import 'widgets/object_card_admin.dart';
 
 class ObjectsView extends StatefulWidget {
   const ObjectsView({Key? key}) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/object_lost.dart';
-import '../utils/object_lost_utils.dart';
-import '../admin/viewmodels/objects_viewmodel.dart';
+import '../../../../models/object_lost.dart';
+import '../../../../utils/object_lost_utils.dart';
+import '../../../../viewmodels/objects_viewmodel.dart';
 import 'object_details_dialog.dart';
 import 'entrega_dialog.dart';
 import 'edit_object_dialog.dart';

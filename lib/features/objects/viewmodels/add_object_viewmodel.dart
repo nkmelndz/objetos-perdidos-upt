@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../models/object_lost.dart';
-import '../../models/entrega.dart';
+import '../models/object_lost.dart';
+import '../models/entrega.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../services/storage_service.dart';
+import '../../../services/storage_service.dart';
 
 class AddObjectViewModel {
   final _db = FirebaseFirestore.instance;
@@ -38,9 +38,9 @@ class AddObjectViewModel {
     String name,
     String description,
     String location,
-    String nombreEncontradoPor,
-    {String? imageUrl}
-  ) {
+    String nombreEncontradoPor, {
+    String? imageUrl,
+  }) {
     if (name.trim().isEmpty) {
       return 'El nombre del objeto es requerido';
     }

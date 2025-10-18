@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../admin/viewmodels/objects_viewmodel.dart';
+import '../viewmodels/objects_viewmodel.dart';
 import '../models/object_lost.dart';
 import '../utils/object_lost_utils.dart';
 

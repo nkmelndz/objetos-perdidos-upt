@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'firebase_options.dart';
 import 'features/welcome/views/welcome_view.dart';
 import 'features/auth/views/login_view.dart';
-import 'features/objects/admin/views/objects_view.dart';
+import 'features/objects/views/admin/list_objects/objects_view.dart';
 import 'features/home/views/home_view.dart';
 
 void main() async {
