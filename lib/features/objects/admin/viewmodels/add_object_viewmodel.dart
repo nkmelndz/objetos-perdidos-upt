@@ -39,6 +39,7 @@ class AddObjectViewModel {
     String description,
     String location,
     String nombreEncontradoPor,
+    {String? imageUrl}
   ) {
     if (name.trim().isEmpty) {
       return 'El nombre del objeto es requerido';
@@ -58,6 +59,9 @@ class AddObjectViewModel {
     }
     if (nombreEncontradoPor.trim().length < 2) {
       return 'El nombre debe tener al menos 2 caracteres';
+    }
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return 'La foto del objeto es obligatoria';
     }
     return null; // Sin errores
   }

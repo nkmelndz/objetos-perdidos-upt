@@ -317,6 +317,7 @@ class _AddObjectViewState extends State<AddObjectView>
       _descController.text,
       _locationController.text,
       _encontradoPorController.text,
+      imageUrl: _imageUrl,
     );
 
     if (validation != null) {

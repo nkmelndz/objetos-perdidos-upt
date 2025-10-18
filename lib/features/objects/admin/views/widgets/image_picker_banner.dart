@@ -125,7 +125,7 @@ class ImagePickerBanner extends StatelessWidget {
             isUploading
                 ? 'Subiendo imagen...'
                 : imageUrl.isEmpty
-                ? 'Toca para añadir una imagen (opcional)'
+                ? 'Toca para añadir una imagen (obligatorio)'
                 : 'Toca para cambiar la imagen',
             style: TextStyle(
               fontSize: 13,
