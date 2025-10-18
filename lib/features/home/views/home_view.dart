@@ -378,22 +378,33 @@ class _HomeContentState extends State<_HomeContent>
     required double maxHeight,
   }) {
     return Container(
-      constraints: BoxConstraints(maxHeight: maxHeight),
+      constraints: BoxConstraints(minHeight: maxHeight, maxHeight: maxHeight),
       child: Scrollbar(
         controller: _scrollController,
         thumbVisibility: true,
         thickness: 6,
         radius: const Radius.circular(8),
-        child: ListView.builder(
-          controller: _scrollController,
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(right: 8),
-          itemCount: objects.length,
-          itemBuilder: (context, index) {
-            return _buildObjectCard(objects[index], index);
-          },
-        ),
+        child: objects.isEmpty
+            ? Center(
+                child: Text(
+                  'No hay objetos registrados',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              )
+            : ListView.builder(
+                controller: _scrollController,
+                shrinkWrap: false, // Cambiado a false para que ocupe todo el espacio
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.only(right: 8),
+                itemCount: objects.length,
+                itemBuilder: (context, index) {
+                  return _buildObjectCard(objects[index], index);
+                },
+              ),
       ),
     );
   }
@@ -469,19 +480,7 @@ class _HomeContentState extends State<_HomeContent>
             child: Row(
               children: [
                 // Icono/Imagen
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1565C0).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.inventory_2_rounded,
-                    color: const Color(0xFF1565C0),
-                    size: 28,
-                  ),
-                ),
+                _buildObjectImage(obj.imageUrl),
 
                 const SizedBox(width: 16),
 
@@ -551,6 +550,71 @@ class _HomeContentState extends State<_HomeContent>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Construye la imagen del objeto o un ícono de fallback
+  Widget _buildObjectImage(String? imageUrl) {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: const Color(0xFF1565C0).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: imageUrl != null && imageUrl.isNotEmpty
+            ? Image.network(
+                imageUrl,
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1565C0).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            const Color(0xFF1565C0).withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1565C0).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.inventory_2_rounded,
+                      color: const Color(0xFF1565C0),
+                      size: 28,
+                    ),
+                  );
+                },
+              )
+            : Icon(
+                Icons.inventory_2_rounded,
+                color: const Color(0xFF1565C0),
+                size: 28,
+              ),
       ),
     );
   }
