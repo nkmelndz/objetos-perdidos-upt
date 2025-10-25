@@ -4,7 +4,7 @@
     <!-- Permiso de Internet para Firebase Auth/Firestore/Storage -->
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="objetos_perdidos_upt"
+        android:label="Objetos Perdidos"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

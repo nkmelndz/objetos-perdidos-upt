@@ -30,11 +30,11 @@ class ObjectLostUtils {
   /// Valida si un objeto coincide con el término de búsqueda
   static bool matchesSearch(ObjectLost object, String searchTerm) {
     if (searchTerm.isEmpty) return true;
-    
+
     final term = searchTerm.toLowerCase();
     return object.name.toLowerCase().contains(term) ||
-           object.description.toLowerCase().contains(term) ||
-           object.location.toLowerCase().contains(term);
+        object.description.toLowerCase().contains(term) ||
+        object.location.toLowerCase().contains(term);
   }
 
   /// Filtra objetos por estado
