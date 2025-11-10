@@ -100,6 +100,12 @@ Future<void> showObjectDetailsDialog({
                             object.status,
                           ),
                         ),
+                        _DetailRow(
+                          label: 'Categoría',
+                          value: ObjectLostUtils.categoryToText(object.category),
+                          icon: Icons.category_rounded,
+                          valueColor: const Color(0xFF1565C0),
+                        ),
 
                         const SizedBox(height: 24),
                         const Divider(),

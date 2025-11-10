@@ -123,30 +123,47 @@ class AddObjectForm extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[200]!, width: 1.5),
+            color: const Color(0xFFF8F9FA),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFE9ECEF), width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Row(
             children: [
-              Icon(Icons.list_rounded, color: Colors.grey[700], size: 20),
+              Icon(
+                Icons.list_rounded,
+                color: const Color(0xFF1565C0),
+                size: 20,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
-                    value: ObjectLostUtils.categoryKeys.contains(selectedCategory)
+                    value:
+                        ObjectLostUtils.categoryKeys.contains(selectedCategory)
                         ? selectedCategory
                         : 'otros',
                     isExpanded: true,
+                    icon: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: const Color(0xFF1565C0),
+                      size: 24,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2C3E50),
+                    ),
+                    dropdownColor: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
                     items: ObjectLostUtils.categoryKeys
                         .map(
                           (key) => DropdownMenuItem<String>(

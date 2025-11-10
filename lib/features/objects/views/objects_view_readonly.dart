@@ -495,32 +495,67 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                     ),
                   ),
 
-                  // Estado
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ObjectLostUtils.statusToColor(
-                        obj.status,
-                      ).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: ObjectLostUtils.statusToColor(
-                          obj.status,
-                        ).withOpacity(0.3),
-                        width: 1,
+                  // Estado y Categoría
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ObjectLostUtils.statusToColor(
+                            obj.status,
+                          ).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: ObjectLostUtils.statusToColor(
+                              obj.status,
+                            ).withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          ObjectLostUtils.statusToText(obj.status),
+                          style: TextStyle(
+                            color: ObjectLostUtils.statusToColor(obj.status),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      ObjectLostUtils.statusToText(obj.status),
-                      style: TextStyle(
-                        color: ObjectLostUtils.statusToColor(obj.status),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1565C0).withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.category_rounded,
+                              color: const Color(0xFF1565C0),
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              ObjectLostUtils.categoryToText(obj.category),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: const Color(0xFF1565C0),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

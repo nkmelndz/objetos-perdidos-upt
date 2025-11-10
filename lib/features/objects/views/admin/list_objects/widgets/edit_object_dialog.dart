@@ -154,18 +154,18 @@ Future<ObjectLost?> showEditObjectDialog({
                                 );
                                 return;
                               }
-          final edited = ObjectLost(
-            id: object.id,
-            name: nameController.text.trim(),
-            description: descController.text.trim(),
-            location: locationController.text.trim(),
-            foundDate: foundDate,
-            imageUrl: object.imageUrl,
-            status: object.status,
-            userId: object.userId,
-            createdAt: object.createdAt,
-            category: category,
-          );
+                              final edited = ObjectLost(
+                                id: object.id,
+                                name: nameController.text.trim(),
+                                description: descController.text.trim(),
+                                location: locationController.text.trim(),
+                                foundDate: foundDate,
+                                imageUrl: object.imageUrl,
+                                status: object.status,
+                                userId: object.userId,
+                                createdAt: object.createdAt,
+                                category: category,
+                              );
                               Navigator.pop(dialogContext, edited);
                             },
                             style: ElevatedButton.styleFrom(
@@ -234,23 +234,47 @@ class _CategorySelectorField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(12),
+            color: const Color(0xFFF8F9FA),
+            border: Border.all(color: const Color(0xFFE9ECEF), width: 1),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             children: [
-              Icon(Icons.list_rounded, color: Colors.grey[600], size: 18),
+              Icon(
+                Icons.list_rounded,
+                color: const Color(0xFF1565C0),
+                size: 20,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
-                    value: ObjectLostUtils.categoryKeys.contains(selectedCategory)
+                    value:
+                        ObjectLostUtils.categoryKeys.contains(selectedCategory)
                         ? selectedCategory
                         : 'otros',
                     isExpanded: true,
+                    icon: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: const Color(0xFF1565C0),
+                      size: 24,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2C3E50),
+                    ),
+                    dropdownColor: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
                     items: ObjectLostUtils.categoryKeys
                         .map(
                           (key) => DropdownMenuItem<String>(
