@@ -16,6 +16,7 @@ class _ObjectsViewState extends State<ObjectsView>
   final ObjectsViewModel _viewModel = ObjectsViewModel();
   final TextEditingController _searchController = TextEditingController();
   ObjectStatus? _selectedFilter;
+  String? _selectedCategory;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -212,6 +213,80 @@ class _ObjectsViewState extends State<ObjectsView>
                                 () => _selectedFilter = ObjectStatus.entregado,
                               );
                               _viewModel.setFilter(ObjectStatus.entregado);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Filtros por categorías (chips con el mismo estilo)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          _buildFilterChip(
+                            label: 'Todas',
+                            isSelected: _selectedCategory == null,
+                            onTap: () {
+                              setState(() => _selectedCategory = null);
+                              _viewModel.setCategoryFilter(null);
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(
+                            label: 'Accesorio personal',
+                            isSelected:
+                                _selectedCategory == 'accesorio_personal',
+                            onTap: () {
+                              setState(
+                                () => _selectedCategory = 'accesorio_personal',
+                              );
+                              _viewModel.setCategoryFilter('accesorio_personal');
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(
+                            label: 'Material académico',
+                            isSelected:
+                                _selectedCategory == 'material_academico',
+                            onTap: () {
+                              setState(
+                                () => _selectedCategory = 'material_academico',
+                              );
+                              _viewModel.setCategoryFilter('material_academico');
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(
+                            label: 'Documento',
+                            isSelected: _selectedCategory == 'documento',
+                            onTap: () {
+                              setState(() => _selectedCategory = 'documento');
+                              _viewModel.setCategoryFilter('documento');
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(
+                            label: 'Electrónico',
+                            isSelected: _selectedCategory == 'electronico',
+                            onTap: () {
+                              setState(() => _selectedCategory = 'electronico');
+                              _viewModel.setCategoryFilter('electronico');
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(
+                            label: 'Otros',
+                            isSelected: _selectedCategory == 'otros',
+                            onTap: () {
+                              setState(() => _selectedCategory = 'otros');
+                              _viewModel.setCategoryFilter('otros');
                             },
                           ),
                         ],

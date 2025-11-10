@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../models/object_lost.dart';
+import '../../../../utils/object_lost_utils.dart';
 
 /// Muestra un diálogo para editar un objeto perdido
 Future<ObjectLost?> showEditObjectDialog({
@@ -11,6 +12,7 @@ Future<ObjectLost?> showEditObjectDialog({
   final descController = TextEditingController(text: object.description);
   final locationController = TextEditingController(text: object.location);
   DateTime foundDate = object.foundDate;
+  String category = object.category;
 
   return showDialog<ObjectLost>(
     context: context,
@@ -91,6 +93,13 @@ Future<ObjectLost?> showEditObjectDialog({
                               icon: Icons.location_on_rounded,
                             ),
                             const SizedBox(height: 16),
+                            _CategorySelectorField(
+                              selectedCategory: category,
+                              onChanged: (value) {
+                                setStateDialog(() => category = value);
+                              },
+                            ),
+                            const SizedBox(height: 16),
                             _DatePickerField(
                               foundDate: foundDate,
                               onDateChanged: (newDate) {
@@ -145,17 +154,18 @@ Future<ObjectLost?> showEditObjectDialog({
                                 );
                                 return;
                               }
-                              final edited = ObjectLost(
-                                id: object.id,
-                                name: nameController.text.trim(),
-                                description: descController.text.trim(),
-                                location: locationController.text.trim(),
-                                foundDate: foundDate,
-                                imageUrl: object.imageUrl,
-                                status: object.status,
-                                userId: object.userId,
-                                createdAt: object.createdAt,
-                              );
+          final edited = ObjectLost(
+            id: object.id,
+            name: nameController.text.trim(),
+            description: descController.text.trim(),
+            location: locationController.text.trim(),
+            foundDate: foundDate,
+            imageUrl: object.imageUrl,
+            status: object.status,
+            userId: object.userId,
+            createdAt: object.createdAt,
+            category: category,
+          );
                               Navigator.pop(dialogContext, edited);
                             },
                             style: ElevatedButton.styleFrom(
@@ -187,6 +197,90 @@ Future<ObjectLost?> showEditObjectDialog({
       );
     },
   );
+}
+
+/// Selector de categoría con estilo consistente
+class _CategorySelectorField extends StatelessWidget {
+  final String selectedCategory;
+  final ValueChanged<String> onChanged;
+
+  const _CategorySelectorField({
+    required this.selectedCategory,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Icons.category_rounded,
+              color: Color(0xFF1565C0),
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Categoría',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.list_rounded, color: Colors.grey[600], size: 18),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: ObjectLostUtils.categoryKeys.contains(selectedCategory)
+                        ? selectedCategory
+                        : 'otros',
+                    isExpanded: true,
+                    items: ObjectLostUtils.categoryKeys
+                        .map(
+                          (key) => DropdownMenuItem<String>(
+                            value: key,
+                            child: Text(
+                              ObjectLostUtils.categoryToText(key),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF2C3E50),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        HapticFeedback.selectionClick();
+                        onChanged(value);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 /// Widget para mostrar una sección de título

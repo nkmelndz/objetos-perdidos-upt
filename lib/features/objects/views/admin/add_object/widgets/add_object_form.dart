@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../utils/object_lost_utils.dart';
 
 class AddObjectForm extends StatelessWidget {
   final TextEditingController nameController;
@@ -12,6 +13,8 @@ class AddObjectForm extends StatelessWidget {
   final FocusNode locationFocus;
   final FocusNode encontradoPorFocus;
   final Function(DateTime) onDateSelected;
+  final String selectedCategory;
+  final Function(String) onCategorySelected;
 
   const AddObjectForm({
     Key? key,
@@ -25,6 +28,8 @@ class AddObjectForm extends StatelessWidget {
     required this.locationFocus,
     required this.encontradoPorFocus,
     required this.onDateSelected,
+    required this.selectedCategory,
+    required this.onCategorySelected,
   }) : super(key: key);
 
   @override
@@ -55,6 +60,8 @@ class AddObjectForm extends StatelessWidget {
           maxLines: 4,
           onSubmitted: (_) => locationFocus.requestFocus(),
         ),
+        const SizedBox(height: 16),
+        _buildCategorySelector(context),
         const SizedBox(height: 32),
         _buildSectionTitle(
           icon: Icons.place_outlined,
@@ -80,6 +87,93 @@ class AddObjectForm extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         _buildDatePicker(context),
+      ],
+    );
+  }
+
+  Widget _buildCategorySelector(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1565C0).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.category_rounded,
+                color: Color(0xFF1565C0),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Categoría',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF2C3E50),
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey[200]!, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.list_rounded, color: Colors.grey[700], size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: ObjectLostUtils.categoryKeys.contains(selectedCategory)
+                        ? selectedCategory
+                        : 'otros',
+                    isExpanded: true,
+                    items: ObjectLostUtils.categoryKeys
+                        .map(
+                          (key) => DropdownMenuItem<String>(
+                            value: key,
+                            child: Text(
+                              ObjectLostUtils.categoryToText(key),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF2C3E50),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        HapticFeedback.selectionClick();
+                        onCategorySelected(value);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

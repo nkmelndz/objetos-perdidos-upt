@@ -26,6 +26,7 @@ class _AddObjectViewState extends State<AddObjectView>
   final TextEditingController _encontradoPorController =
       TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  String _selectedCategory = 'otros';
   String _imageUrl = '';
   bool _isLoading = false; // solo para guardar
   bool _isUploadingImage = false; // para subida de imagen
@@ -179,6 +180,10 @@ class _AddObjectViewState extends State<AddObjectView>
                           onDateSelected: (date) {
                             setState(() => _selectedDate = date);
                           },
+                          selectedCategory: _selectedCategory,
+                          onCategorySelected: (cat) {
+                            setState(() => _selectedCategory = cat);
+                          },
                         ),
 
                         const SizedBox(height: 40),
@@ -281,6 +286,7 @@ class _AddObjectViewState extends State<AddObjectView>
     _encontradoPorController.clear();
     setState(() {
       _selectedDate = DateTime.now();
+      _selectedCategory = 'otros';
       _imageUrl = '';
     });
 
@@ -345,6 +351,7 @@ class _AddObjectViewState extends State<AddObjectView>
             status: ObjectStatus.encontrado,
         userId: AuthService.getCurrentUserId() ?? 'unknown',
         createdAt: DateTime.now(),
+        category: _selectedCategory,
       );
 
       await _viewModel.addObjectAndEntrega(
@@ -363,6 +370,7 @@ class _AddObjectViewState extends State<AddObjectView>
         _encontradoPorController.clear();
         setState(() {
           _selectedDate = DateTime.now();
+          _selectedCategory = 'otros';
           _imageUrl = '';
         });
       }

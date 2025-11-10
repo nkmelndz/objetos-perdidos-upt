@@ -7,16 +7,21 @@ class ObjectsViewModel {
   final _db = FirebaseFirestore.instance;
   String _search = '';
   ObjectStatus? _filter;
+  String? _categoryFilter;
 
   // Getters para el estado actual
   String get currentSearch => _search;
   ObjectStatus? get currentFilter => _filter;
+  String? get currentCategory => _categoryFilter;
 
   /// Actualiza el término de búsqueda
   void setSearch(String value) => _search = value;
 
   /// Actualiza el filtro de estado
   void setFilter(ObjectStatus? status) => _filter = status;
+
+  /// Actualiza el filtro de categoría
+  void setCategoryFilter(String? category) => _categoryFilter = category;
 
   /// Stream de objetos con filtros aplicados
   Stream<List<ObjectLost>> objectsStream() {
@@ -38,7 +43,8 @@ class ObjectsViewModel {
   List<ObjectLost> _applyFilters(List<ObjectLost> objects) {
     return objects.where((obj) {
       return ObjectLostUtils.matchesSearch(obj, _search) &&
-          ObjectLostUtils.matchesStatus(obj, _filter);
+          ObjectLostUtils.matchesStatus(obj, _filter) &&
+          ObjectLostUtils.matchesCategory(obj, _categoryFilter);
     }).toList();
   }
 

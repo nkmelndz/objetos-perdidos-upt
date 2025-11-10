@@ -9,6 +9,7 @@ class ObjectLost {
   final ObjectStatus status;
   final String userId;
   final DateTime createdAt;
+  final String category; // categoría canónica
 
   ObjectLost({
     required this.id,
@@ -20,6 +21,7 @@ class ObjectLost {
     required this.status,
     required this.userId,
     required this.createdAt,
+    required this.category,
   });
 
   Map<String, dynamic> toMap() => {
@@ -31,6 +33,7 @@ class ObjectLost {
     'estado': _statusToString(status),
     'id_user': userId,
     'fecha_registro': createdAt.toIso8601String(),
+    'categoria': category,
   };
 
   factory ObjectLost.fromMap(String id, Map<String, dynamic> map) {
@@ -46,6 +49,7 @@ class ObjectLost {
       userId: (map['id_user'] ?? '') as String,
       createdAt:
           DateTime.tryParse(map['fecha_registro'] ?? '') ?? DateTime.now(),
+      category: (map['categoria'] ?? 'otros') as String,
     );
   }
 }

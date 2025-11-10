@@ -233,6 +233,95 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                   ],
                                 ),
                               ),
+
+                              const SizedBox(height: 12),
+
+                              // Filtro por categorías (mantiene el estilo de segmented control)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F3F4),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Todas',
+                                        isSelected:
+                                            _viewModel.currentCategory == null,
+                                        onTap: () {
+                                          _viewModel.setCategoryFilter(null);
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Accesorio personal',
+                                        isSelected:
+                                            _viewModel.currentCategory ==
+                                                'accesorio_personal',
+                                        onTap: () {
+                                          _viewModel
+                                              .setCategoryFilter('accesorio_personal');
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Material académico',
+                                        isSelected:
+                                            _viewModel.currentCategory ==
+                                                'material_academico',
+                                        onTap: () {
+                                          _viewModel
+                                              .setCategoryFilter('material_academico');
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Documento',
+                                        isSelected:
+                                            _viewModel.currentCategory ==
+                                                'documento',
+                                        onTap: () {
+                                          _viewModel.setCategoryFilter('documento');
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Electrónico',
+                                        isSelected:
+                                            _viewModel.currentCategory ==
+                                                'electronico',
+                                        onTap: () {
+                                          _viewModel.setCategoryFilter('electronico');
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _buildSegmentedButton(
+                                        label: 'Otros',
+                                        isSelected:
+                                            _viewModel.currentCategory ==
+                                                'otros',
+                                        onTap: () {
+                                          _viewModel.setCategoryFilter('otros');
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
