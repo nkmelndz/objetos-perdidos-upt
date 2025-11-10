@@ -176,37 +176,32 @@ class _HomeContentState extends State<_HomeContent>
             // Obtener datos del dashboard
             final data = snapshot.data ?? DashboardData.empty();
 
-            return CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
+            return Column(
+              children: [
                 // Header con gradiente
-                SliverToBoxAdapter(
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: _buildHeader(
-                      userName: data.userName,
-                      isTablet: isTablet,
-                    ),
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: _buildHeader(
+                    userName: data.userName,
+                    isTablet: isTablet,
                   ),
                 ),
 
                 // Tarjetas de resumen
-                SliverToBoxAdapter(
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: _buildSummaryCards(
-                      total: data.totalCount,
-                      delivered: data.deliveredCount,
-                      pending: data.pendingCount,
-                      isTablet: isTablet,
-                    ),
+                SlideTransition(
+                  position: _slideAnimation,
+                  child: _buildSummaryCards(
+                    total: data.totalCount,
+                    delivered: data.deliveredCount,
+                    pending: data.pendingCount,
+                    isTablet: isTablet,
                   ),
                 ),
 
-                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                const SizedBox(height: 32),
 
-                // Contenido principal con fondo blanco
-                SliverToBoxAdapter(
+                // Contenido principal con fondo blanco (solo la lista interna hace scroll)
+                Expanded(
                   child: _buildMainContent(
                     recentObjects: data.recentObjects,
                     isEmpty: data.isEmpty,
@@ -289,7 +284,7 @@ class _HomeContentState extends State<_HomeContent>
           Expanded(
             child: _ModernResumenCard(
               icon: Icons.pending_rounded,
-                          label: 'Encontrados',
+              label: 'Encontrados',
               value: pending.toString(),
               color: const Color(0xFFFF9800),
             ),
@@ -306,8 +301,7 @@ class _HomeContentState extends State<_HomeContent>
     required Size screenSize,
     required bool isTablet,
   }) {
-    // Calcular altura consistente para ambos estados
-    final contentHeight = screenSize.height * 0.5;
+    // Usar expansión para ocupar el espacio restante sin dejar vacío
 
     return Container(
       decoration: BoxDecoration(
@@ -336,13 +330,13 @@ class _HomeContentState extends State<_HomeContent>
           children: [
             _buildSectionTitle(isTablet: isTablet),
             const SizedBox(height: 20),
-            if (isEmpty)
-              _buildEmptyState(height: contentHeight)
-            else
-              _buildObjectsList(
-                objects: recentObjects,
-                maxHeight: contentHeight,
-              ),
+            Expanded(
+              child: isEmpty
+                  ? _buildEmptyState()
+                  : _buildObjectsList(
+                      objects: recentObjects,
+                    ),
+            ),
           ],
         ),
       ),
@@ -378,38 +372,33 @@ class _HomeContentState extends State<_HomeContent>
   /// Construye la lista de objetos con scrollbar
   Widget _buildObjectsList({
     required List<ObjectLost> objects,
-    required double maxHeight,
   }) {
-    return Container(
-      constraints: BoxConstraints(minHeight: maxHeight, maxHeight: maxHeight),
-      child: Scrollbar(
-        controller: _scrollController,
-        thumbVisibility: true,
-        thickness: 6,
-        radius: const Radius.circular(8),
-        child: objects.isEmpty
-            ? Center(
-                child: Text(
-                  'No hay objetos registrados',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
+    return Scrollbar(
+      controller: _scrollController,
+      thumbVisibility: true,
+      thickness: 6,
+      radius: const Radius.circular(8),
+      child: objects.isEmpty
+          ? Center(
+              child: Text(
+                'No hay objetos registrados',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
                 ),
-              )
-            : ListView.builder(
-                controller: _scrollController,
-                shrinkWrap:
-                    false, // Cambiado a false para que ocupe todo el espacio
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(right: 8),
-                itemCount: objects.length,
-                itemBuilder: (context, index) {
-                  return _buildObjectCard(objects[index], index);
-                },
               ),
-      ),
+            )
+          : ListView.builder(
+              controller: _scrollController,
+              shrinkWrap: false,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(right: 8),
+              itemCount: objects.length,
+              itemBuilder: (context, index) {
+                return _buildObjectCard(objects[index], index);
+              },
+            ),
     );
   }
 
