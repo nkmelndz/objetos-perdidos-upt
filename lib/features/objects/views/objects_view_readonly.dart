@@ -179,145 +179,134 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                 ),
                               ),
 
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 16),
 
-                              // Filtros mejorados como segmented control
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F3F4),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
+                              // Filtros con scroll horizontal
+                              SizedBox(
+                                height: 42,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
                                   children: [
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Todos',
-                                        isSelected:
-                                            _viewModel.currentFilter == null,
-                                        onTap: () {
-                                          _viewModel.setFilter(null);
-                                          setState(() {});
-                                        },
-                                      ),
+                                    // Filtros de estado
+                                    _buildFilterChip(
+                                      label: 'Todos',
+                                      isSelected:
+                                          _viewModel.currentFilter == null,
+                                      onTap: () {
+                                        _viewModel.setFilter(null);
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Encontrado',
-                                        isSelected:
-                                            _viewModel.currentFilter ==
-                                            ObjectStatus.encontrado,
-                                        onTap: () {
-                                          _viewModel.setFilter(
-                                            ObjectStatus.encontrado,
-                                          );
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Encontrado',
+                                      isSelected:
+                                          _viewModel.currentFilter ==
+                                          ObjectStatus.encontrado,
+                                      onTap: () {
+                                        _viewModel.setFilter(
+                                          ObjectStatus.encontrado,
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Entregado',
-                                        isSelected:
-                                            _viewModel.currentFilter ==
-                                            ObjectStatus.entregado,
-                                        onTap: () {
-                                          _viewModel.setFilter(
-                                            ObjectStatus.entregado,
-                                          );
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Entregado',
+                                      isSelected:
+                                          _viewModel.currentFilter ==
+                                          ObjectStatus.entregado,
+                                      onTap: () {
+                                        _viewModel.setFilter(
+                                          ObjectStatus.entregado,
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
-                                  ],
-                                ),
-                              ),
 
-                              const SizedBox(height: 12),
+                                    // Separador vertical
+                                    Container(
+                                      width: 1,
+                                      height: 32,
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 5,
+                                      ),
+                                      color: const Color(0xFFE9ECEF),
+                                    ),
 
-                              // Filtro por categorías (mantiene el estilo de segmented control)
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F3F4),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Todas',
-                                        isSelected:
-                                            _viewModel.currentCategory == null,
-                                        onTap: () {
-                                          _viewModel.setCategoryFilter(null);
-                                          setState(() {});
-                                        },
-                                      ),
+                                    // Filtros de categorías
+                                    _buildFilterChip(
+                                      label: 'Todas',
+                                      isSelected:
+                                          _viewModel.currentCategory == null,
+                                      onTap: () {
+                                        _viewModel.setCategoryFilter(null);
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Accesorio personal',
-                                        isSelected:
-                                            _viewModel.currentCategory ==
-                                                'accesorio_personal',
-                                        onTap: () {
-                                          _viewModel
-                                              .setCategoryFilter('accesorio_personal');
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Accesorio',
+                                      isSelected:
+                                          _viewModel.currentCategory ==
+                                          'accesorio_personal',
+                                      onTap: () {
+                                        _viewModel.setCategoryFilter(
+                                          'accesorio_personal',
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Material académico',
-                                        isSelected:
-                                            _viewModel.currentCategory ==
-                                                'material_academico',
-                                        onTap: () {
-                                          _viewModel
-                                              .setCategoryFilter('material_academico');
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Material',
+                                      isSelected:
+                                          _viewModel.currentCategory ==
+                                          'material_academico',
+                                      onTap: () {
+                                        _viewModel.setCategoryFilter(
+                                          'material_academico',
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Documento',
-                                        isSelected:
-                                            _viewModel.currentCategory ==
-                                                'documento',
-                                        onTap: () {
-                                          _viewModel.setCategoryFilter('documento');
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Documento',
+                                      isSelected:
+                                          _viewModel.currentCategory ==
+                                          'documento',
+                                      onTap: () {
+                                        _viewModel.setCategoryFilter(
+                                          'documento',
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Electrónico',
-                                        isSelected:
-                                            _viewModel.currentCategory ==
-                                                'electronico',
-                                        onTap: () {
-                                          _viewModel.setCategoryFilter('electronico');
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Electrónico',
+                                      isSelected:
+                                          _viewModel.currentCategory ==
+                                          'electronico',
+                                      onTap: () {
+                                        _viewModel.setCategoryFilter(
+                                          'electronico',
+                                        );
+                                        setState(() {});
+                                      },
                                     ),
-                                    Expanded(
-                                      child: _buildSegmentedButton(
-                                        label: 'Otros',
-                                        isSelected:
-                                            _viewModel.currentCategory ==
-                                                'otros',
-                                        onTap: () {
-                                          _viewModel.setCategoryFilter('otros');
-                                          setState(() {});
-                                        },
-                                      ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterChip(
+                                      label: 'Otros',
+                                      isSelected:
+                                          _viewModel.currentCategory == 'otros',
+                                      onTap: () {
+                                        _viewModel.setCategoryFilter('otros');
+                                        setState(() {});
+                                      },
                                     ),
                                   ],
                                 ),
@@ -373,7 +362,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
     );
   }
 
-  Widget _buildSegmentedButton({
+  Widget _buildFilterChip({
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
@@ -387,26 +376,30 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? const Color(0xFF1565C0) : const Color(0xFFF1F3F4),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF1565C0)
+                : const Color(0xFFE9ECEF),
+            width: 1,
+          ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
+                    color: const Color(0xFF1565C0).withOpacity(0.3),
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ]
               : null,
         ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? const Color(0xFF1565C0) : Colors.grey[600],
-              fontSize: 14,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.grey[700],
+            fontSize: 14,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
       ),

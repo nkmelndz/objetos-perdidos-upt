@@ -174,15 +174,14 @@ class _ObjectsViewState extends State<ObjectsView>
 
                     const SizedBox(height: 16),
 
-                    // Filtros de estado
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
+                    // Filtros con scroll horizontal
+                    SizedBox(
+                      height: 42,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         children: [
+                          // Filtros de estado
                           _buildFilterChip(
                             label: 'Todos',
                             isSelected: _selectedFilter == null,
@@ -215,21 +214,19 @@ class _ObjectsViewState extends State<ObjectsView>
                               _viewModel.setFilter(ObjectStatus.entregado);
                             },
                           ),
-                        ],
-                      ),
-                    ),
 
-                    const SizedBox(height: 8),
+                          // Separador vertical
+                          Container(
+                            width: 1,
+                            height: 32,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 5,
+                            ),
+                            color: Colors.white.withOpacity(0.3),
+                          ),
 
-                    // Filtros por categorías (chips con el mismo estilo)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
+                          // Filtros de categorías
                           _buildFilterChip(
                             label: 'Todas',
                             isSelected: _selectedCategory == null,
@@ -240,26 +237,30 @@ class _ObjectsViewState extends State<ObjectsView>
                           ),
                           const SizedBox(width: 8),
                           _buildFilterChip(
-                            label: 'Accesorio personal',
+                            label: 'Accesorio',
                             isSelected:
                                 _selectedCategory == 'accesorio_personal',
                             onTap: () {
                               setState(
                                 () => _selectedCategory = 'accesorio_personal',
                               );
-                              _viewModel.setCategoryFilter('accesorio_personal');
+                              _viewModel.setCategoryFilter(
+                                'accesorio_personal',
+                              );
                             },
                           ),
                           const SizedBox(width: 8),
                           _buildFilterChip(
-                            label: 'Material académico',
+                            label: 'Material',
                             isSelected:
                                 _selectedCategory == 'material_academico',
                             onTap: () {
                               setState(
                                 () => _selectedCategory = 'material_academico',
                               );
-                              _viewModel.setCategoryFilter('material_academico');
+                              _viewModel.setCategoryFilter(
+                                'material_academico',
+                              );
                             },
                           ),
                           const SizedBox(width: 8),
@@ -365,37 +366,41 @@ class _ObjectsViewState extends State<ObjectsView>
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          HapticFeedback.selectionClick();
-          onTap();
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFFFFC107)
+              : Colors.white.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFFFC107)
+                : Colors.white.withOpacity(0.3),
+            width: 1,
           ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFFFFC107) : Colors.white,
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFFFC107).withOpacity(0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? const Color(0xFF0D47A1) : Colors.white,
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
       ),
