@@ -42,7 +42,7 @@ class ObjectLost {
       foundDate:
           DateTime.tryParse(map['fecha_encontrado'] ?? '') ?? DateTime.now(),
       imageUrl: (map['imagen_url'] ?? '') as String,
-      status: _statusFromString(map['estado'] ?? 'pendiente'),
+      status: _statusFromString(map['estado'] ?? 'encontrado'),
       userId: (map['id_user'] ?? '') as String,
       createdAt:
           DateTime.tryParse(map['fecha_registro'] ?? '') ?? DateTime.now(),
@@ -50,12 +50,12 @@ class ObjectLost {
   }
 }
 
-enum ObjectStatus { pendiente, entregado }
+enum ObjectStatus { encontrado, entregado }
 
 String _statusToString(ObjectStatus status) {
   switch (status) {
-    case ObjectStatus.pendiente:
-      return 'pendiente';
+    case ObjectStatus.encontrado:
+      return 'encontrado';
     case ObjectStatus.entregado:
       return 'entregado';
   }
@@ -65,8 +65,11 @@ ObjectStatus _statusFromString(String value) {
   switch (value) {
     case 'entregado':
       return ObjectStatus.entregado;
+    case 'encontrado':
+      return ObjectStatus.encontrado;
     case 'pendiente':
     default:
-      return ObjectStatus.pendiente;
+      // Backward compatibility: previously stored as 'pendiente'
+      return ObjectStatus.encontrado;
   }
 }

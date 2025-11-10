@@ -204,13 +204,13 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                     ),
                                     Expanded(
                                       child: _buildSegmentedButton(
-                                        label: 'Pendiente',
+                                        label: 'Encontrado',
                                         isSelected:
                                             _viewModel.currentFilter ==
-                                            ObjectStatus.pendiente,
+                                            ObjectStatus.encontrado,
                                         onTap: () {
                                           _viewModel.setFilter(
-                                            ObjectStatus.pendiente,
+                                            ObjectStatus.encontrado,
                                           );
                                           setState(() {});
                                         },

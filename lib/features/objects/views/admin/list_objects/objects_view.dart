@@ -192,14 +192,14 @@ class _ObjectsViewState extends State<ObjectsView>
                           ),
                           const SizedBox(width: 8),
                           _buildFilterChip(
-                            label: 'Pendientes',
+                            label: 'Encontrados',
                             isSelected:
-                                _selectedFilter == ObjectStatus.pendiente,
+                                _selectedFilter == ObjectStatus.encontrado,
                             onTap: () {
                               setState(
-                                () => _selectedFilter = ObjectStatus.pendiente,
+                                () => _selectedFilter = ObjectStatus.encontrado,
                               );
-                              _viewModel.setFilter(ObjectStatus.pendiente);
+                              _viewModel.setFilter(ObjectStatus.encontrado);
                             },
                           ),
                           const SizedBox(width: 8),

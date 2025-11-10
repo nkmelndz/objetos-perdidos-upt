@@ -342,7 +342,7 @@ class _AddObjectViewState extends State<AddObjectView>
         location: _locationController.text.trim(),
         foundDate: _selectedDate,
         imageUrl: _imageUrl,
-        status: ObjectStatus.pendiente,
+            status: ObjectStatus.encontrado,
         userId: AuthService.getCurrentUserId() ?? 'unknown',
         createdAt: DateTime.now(),
       );

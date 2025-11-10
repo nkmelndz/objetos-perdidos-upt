@@ -40,7 +40,7 @@ class DashboardData {
         .where((o) => o.status == ObjectStatus.entregado)
         .length;
     final pending = objects
-        .where((o) => o.status == ObjectStatus.pendiente)
+      .where((o) => o.status == ObjectStatus.encontrado)
         .length;
     final recent = objects.take(recentLimit).toList();
 

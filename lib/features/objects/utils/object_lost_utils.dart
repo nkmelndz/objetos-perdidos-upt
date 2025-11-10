@@ -5,8 +5,8 @@ class ObjectLostUtils {
   /// Convierte el estado a texto legible
   static String statusToText(ObjectStatus status) {
     switch (status) {
-      case ObjectStatus.pendiente:
-        return 'Pendiente';
+      case ObjectStatus.encontrado:
+        return 'Encontrado';
       case ObjectStatus.entregado:
         return 'Entregado';
     }
@@ -15,7 +15,7 @@ class ObjectLostUtils {
   /// Obtiene el color asociado al estado
   static Color statusToColor(ObjectStatus status) {
     switch (status) {
-      case ObjectStatus.pendiente:
+      case ObjectStatus.encontrado:
         return Colors.orange;
       case ObjectStatus.entregado:
         return Colors.green;

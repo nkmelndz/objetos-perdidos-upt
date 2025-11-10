@@ -289,7 +289,7 @@ class _HomeContentState extends State<_HomeContent>
           Expanded(
             child: _ModernResumenCard(
               icon: Icons.pending_rounded,
-              label: 'Pendientes',
+                          label: 'Encontrados',
               value: pending.toString(),
               color: const Color(0xFFFF9800),
             ),
