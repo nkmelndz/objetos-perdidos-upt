@@ -261,7 +261,7 @@ class _ObjectsViewReadOnlyState extends State<ObjectsViewReadOnly>
                                     ),
                                     const SizedBox(width: 8),
                                     _buildFilterChip(
-                                      label: 'Material',
+                                      label: 'Académico',
                                       isSelected:
                                           _viewModel.currentCategory ==
                                           'material_academico',

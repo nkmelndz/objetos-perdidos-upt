@@ -251,7 +251,7 @@ class _ObjectsViewState extends State<ObjectsView>
                           ),
                           const SizedBox(width: 8),
                           _buildFilterChip(
-                            label: 'Material',
+                            label: 'Académico',
                             isSelected:
                                 _selectedCategory == 'material_academico',
                             onTap: () {
