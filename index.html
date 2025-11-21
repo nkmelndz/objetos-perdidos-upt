@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetos Perdidos EPIS - Legal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .card-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .card {
+            flex: 1;
+            min-width: 250px;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Objetos Perdidos EPIS</h1>
+        <p>Bienvenido al portal de información legal y privacidad de la aplicación "Objetos Perdidos EPIS".</p>
+
+        <div class="card-container">
+            <div class="card">
+                <h3>Política de Privacidad</h3>
+                <p>Conozca cómo recopilamos y protegemos sus datos.</p>
+                <a href="privacy.html" class="btn">Ver Política</a>
+            </div>
+            <div class="card">
+                <h3>Eliminación de Cuenta</h3>
+                <p>Instrucciones para solicitar la baja de su cuenta.</p>
+                <a href="delete_account.html" class="btn">Ver Instrucciones</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Objetos Perdidos EPIS. Universidad Privada de Tacna.</p>
+        </div>
+    </div>
+</body>
+</html>
