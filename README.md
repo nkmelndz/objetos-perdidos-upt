@@ -2,14 +2,6 @@
 
 App open source para la gestión y reporte de objetos perdidos en la Universidad Privada de Tacna.
 
-## Vista previa de la aplicación
-
-<p align="center">
-  <img src="https://i.imgur.com/dDacuyc.png" width="300" style="margin-right:50px;">
-  <img src="https://i.imgur.com/1lWbP3E.png" width="300">
-</p>
-
-
 ## Propósito
 Esta aplicación permite a estudiantes y personal reportar, buscar y recuperar objetos perdidos dentro de la universidad. Cualquier persona puede contribuir y mejorar la plataforma.
 
@@ -47,6 +39,13 @@ Esta aplicación permite a estudiantes y personal reportar, buscar y recuperar o
 2. Reporta un objeto perdido o revisa los reportes existentes.
 3. Si el dueño reclama el objeto, marca el reporte como "entregado".
 4. Administra tu perfil y cambia tu contraseña desde la sección de seguridad.
+
+## Vista previa de la aplicación
+
+<p align="center">
+  <img src="https://i.imgur.com/dDacuyc.png" width="300" style="margin-right:50px;">
+  <img src="https://i.imgur.com/1lWbP3E.png" width="300">
+</p>
 
 ## Cómo contribuir
 
