@@ -40,7 +40,7 @@ Esta aplicación permite a estudiantes y personal reportar, buscar y recuperar o
 3. Si el dueño reclama el objeto, marca el reporte como "entregado".
 4. Administra tu perfil y cambia tu contraseña desde la sección de seguridad.
 
-## Vista previa de la aplicación
+## Vista previa
 
 <p align="center">
   <img src="https://i.imgur.com/dDacuyc.png" width="300" style="margin-right:50px;">
