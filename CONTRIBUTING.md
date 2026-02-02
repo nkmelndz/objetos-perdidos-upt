@@ -24,30 +24,29 @@
 4. Configuración de usuarios administradores:
    - Actualmente, la aplicación solo permite acceso a usuarios con claim `admin`
    - Para configurar un usuario como administrador, ejecuta el siguiente script de Node.js:
+        ```javascript
+        const admin = require("firebase-admin");
+        
+        // Carga tus credenciales descargadas desde Firebase Console
+        const serviceAccount = require("./ruta-a-tu-archivo-de-credenciales.json");
 
-   ```javascript
-   const admin = require("firebase-admin");
-   
-   // Carga tus credenciales descargadas desde Firebase Console
-const serviceAccount = require("./ruta-a-tu-archivo-de-credenciales.json");
+        admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        });
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-// UID del usuario (cópialo desde Firebase Authentication)
-const uid = "TuUsuarioUID123456789"; // Ejemplo: "g7H3aB9cD2eF1gH0iJ"
-   
-   admin
-     .auth()
-     .setCustomUserClaims(uid, { admin: true })
-     .then(() => {
-       console.log(`✅ Usuario ${uid} ahora es ADMIN`);
-     })
-     .catch((err) => {
-       console.error("❌ Error al asignar rol:", err);
-     });
-   ```
+        // UID del usuario (cópialo desde Firebase Authentication)
+        const uid = "TuUsuarioUID123456789"; // Ejemplo: "g7H3aB9cD2eF1gH0iJ"
+        
+        admin
+            .auth()
+            .setCustomUserClaims(uid, { admin: true })
+            .then(() => {
+            console.log(`✅ Usuario ${uid} ahora es ADMIN`);
+            })
+            .catch((err) => {
+            console.error("❌ Error al asignar rol:", err);
+            });
+        ```
    
    - Pasos para ejecutar el script:
      1. Instala Node.js si no lo tienes
